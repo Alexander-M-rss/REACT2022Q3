@@ -1,7 +1,5 @@
 .search-container {
-  margin: 5px auto;
   width: fit-content;
-  height: 36px;
   display: flex;
   align-items: center;
   gap: 5px;
