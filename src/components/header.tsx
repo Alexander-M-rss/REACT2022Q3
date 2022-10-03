@@ -4,6 +4,8 @@ import './header.css';
 
 type pageTitles = 'Main Page' | 'About Us' | 'Not Found';
 
+export const HEADER_HEIGHT = '50px';
+
 export const links = {
   main: {
     to: '/',
@@ -27,7 +29,7 @@ interface IHeaderProps {
 
 function Header({ title, links }: IHeaderProps) {
   return (
-    <header className="header">
+    <header className="header" style={{ height: HEADER_HEIGHT }}>
       <h1>{title}</h1>
       <nav>
         <ul className="nav__list">
