@@ -2,8 +2,8 @@ import React from 'react';
 import './searchBar.css';
 
 const SEARCH_BAR_HEIGHT = '36px';
-const MARGING_TOP_BOTTOM = '10px';
-export const SEARCH_HEIGHT = `${SEARCH_BAR_HEIGHT} + 2 * ${MARGING_TOP_BOTTOM}`;
+const MARGIN_TOP_BOTTOM = '10px';
+export const SEARCH_HEIGHT = `${SEARCH_BAR_HEIGHT} + 2 * ${MARGIN_TOP_BOTTOM}`;
 
 interface ISearchBarProps {
   placeholder: string;
@@ -36,7 +36,7 @@ class SearchBar extends React.Component<ISearchBarProps, ISearchBarState> {
     return (
       <div
         className="search-container"
-        style={{ height: SEARCH_BAR_HEIGHT, margin: `${MARGING_TOP_BOTTOM} auto` }}
+        style={{ height: SEARCH_BAR_HEIGHT, margin: `${MARGIN_TOP_BOTTOM} auto` }}
       >
         <button className="button search-button"></button>
         <input
