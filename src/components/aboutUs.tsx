@@ -3,7 +3,7 @@ import './aboutUs.css';
 
 function AboutUs() {
   return (
-    <section className="about-us">
+    <section className="about-us" data-testid="about-us">
       <p>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
         labore et dolore magna aliqua. Suspendisse sed nisi lacus sed viverra. Duis ultricies lacus
