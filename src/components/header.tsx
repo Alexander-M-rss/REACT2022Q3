@@ -29,7 +29,7 @@ interface IHeaderProps {
 
 function Header({ title, links }: IHeaderProps) {
   return (
-    <header className="header" style={{ height: HEADER_HEIGHT }}>
+    <header className="header" style={{ height: HEADER_HEIGHT }} data-testid="header">
       <h1>{title}</h1>
       <nav>
         <ul className="nav__list">
