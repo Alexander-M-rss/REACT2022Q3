@@ -4,6 +4,7 @@ exports[`About Us section renders component 1`] = `
 <DocumentFragment>
   <section
     class="about-us"
+    data-testid="about-us"
   >
     <p>
       Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Suspendisse sed nisi lacus sed viverra. Duis ultricies lacus sed turpis tincidunt id aliquet risus feugiat. Purus semper eget duis at tellus. Augue lacus viverra vitae congue eu consequat ac. Pulvinar pellentesque habitant morbi tristique. Hac habitasse platea dictumst vestibulum rhoncus est. Diam phasellus vestibulum lorem sed. Eros donec ac odio tempor orci. Ut pharetra sit amet aliquam. Massa eget egestas purus viverra accumsan in nisl nisi scelerisque.
