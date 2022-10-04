@@ -37,6 +37,7 @@ class SearchBar extends React.Component<ISearchBarProps, ISearchBarState> {
       <div
         className="search-container"
         style={{ height: SEARCH_BAR_HEIGHT, margin: `${MARGIN_TOP_BOTTOM} auto` }}
+        data-testid="search-bar"
       >
         <button className="button search-button"></button>
         <input

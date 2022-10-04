@@ -11,7 +11,11 @@ interface IItemsCardsListProps {
 
 function ItemsCardsList({ heightOffset, baseImgUrl, items }: IItemsCardsListProps) {
   return (
-    <section className="items-cards-list" style={{ height: `calc(100vh - (${heightOffset}))` }}>
+    <section
+      className="items-cards-list"
+      style={{ height: `calc(100vh - (${heightOffset}))` }}
+      data-testid="items-cards-list"
+    >
       {items.map((item) => {
         return (
           <ItemCard
