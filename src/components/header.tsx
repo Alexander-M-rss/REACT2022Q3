@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './header.css';
 
-type pageTitles = 'Main Page' | 'About Us' | 'Not Found';
+type pageTitles = 'Main Page' | 'Forms Page' | 'About Us' | 'Not Found';
 
 export const HEADER_HEIGHT = '50px';
 
@@ -10,6 +10,10 @@ export const links = {
   main: {
     to: '/',
     title: 'Main',
+  },
+  forms: {
+    to: '/forms',
+    title: 'Forms',
   },
   about: {
     to: '/about',
