@@ -4,7 +4,7 @@ import Header, { links, HEADER_HEIGHT } from '../components/header';
 function NotFound() {
   return (
     <>
-      <Header title="Not Found" links={[links.main, links.about]} />
+      <Header title="Not Found" links={[links.main, links.forms, links.about]} />
       <div
         style={{
           height: `calc(100vh - ${HEADER_HEIGHT})`,

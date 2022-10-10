@@ -21,7 +21,7 @@ class Main extends React.Component {
   render() {
     return (
       <>
-        <Header title="Main Page" links={[links.about]} />
+        <Header title="Main Page" links={[links.forms, links.about]} />
         <SearchBar placeholder="Search" />
         <ItemsCardsList
           items={itemsData}
