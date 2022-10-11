@@ -1,0 +1,21 @@
+.labled-select__label {
+  margin: 5px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.labled-select__label div {
+  height: 40px;
+  padding: 0 3px;
+  display: flex;
+  flex-direction: column;
+}
+
+.labled-select__select {
+  width:  190px;
+  color: #0d1117;
+  background-color: #c9d1d9;
+  border: none;
+  border-radius: 5px;
+  outline-color: #c9d1d9;
+}

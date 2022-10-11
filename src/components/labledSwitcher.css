@@ -1,0 +1,25 @@
+.labled-switcher__label {
+  margin: 5px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.labled-switcher__label div {
+  height: 60px;
+  padding: 0 3px;
+  display: flex;
+  flex-direction: column;
+}
+
+.labled-switcher__option {
+  width:  190px;
+}
+
+.labled-switcher__input {
+  margin-right: 10px;
+  color: #0d1117;
+  background-color: #c9d1d9;
+  border: none;
+  border-radius: 5px;
+  outline-color: #c9d1d9;
+}
