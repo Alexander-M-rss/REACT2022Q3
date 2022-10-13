@@ -6,7 +6,6 @@ interface ISelectProps {
   name: string;
   options: string[];
   errMsg: string;
-  reference: React.RefObject<HTMLSelectElement>;
   onChangeHandler?: React.ChangeEventHandler<HTMLSelectElement>;
 }
 
@@ -26,7 +25,6 @@ class LabledSelect extends React.Component<ISelectProps, unknown> {
             name={name}
             id={name}
             className="labled-select__select"
-            ref={this.props.reference}
             onChange={onChangeHandler}
           >
             <option value="">{text}</option>

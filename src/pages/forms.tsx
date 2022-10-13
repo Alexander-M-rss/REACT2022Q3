@@ -37,7 +37,7 @@ class Forms extends React.Component<unknown, IFormsState> {
               birthday={card.birthday}
               gender={card.gender}
               country={card.country}
-              profilePicture={card.profilePicture}
+              picture={card.picture}
             />
           );
         })}

@@ -1,14 +1,7 @@
-export type InputType =
-  | 'nameInput'
-  | 'surnameInput'
-  | 'birthdayInput'
-  | 'fileInput'
-  | 'consentInput'
-  | 'countryInput';
+import { IPersonCardProps } from './personCard';
 
-export type InputRef = {
-  [k in InputType]: React.RefObject<HTMLInputElement> | React.RefObject<HTMLSelectElement>;
-};
+export interface IFormValues extends IPersonCardProps {
+  consent: string;
+}
 
-export type MsgTemplates = { [k in InputType | 'genderInput']: string };
-export type NotValidInputs = { [k in InputType | 'genderInput']: boolean };
+export type NotValidInputs = { [k in keyof IFormValues]: boolean };

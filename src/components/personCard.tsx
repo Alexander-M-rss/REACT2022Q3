@@ -8,17 +8,10 @@ export interface IPersonCardProps {
   birthday: string;
   gender: string;
   country: string;
-  profilePicture: string;
+  picture: string;
 }
 
-function PersonCard({
-  name,
-  surname,
-  birthday,
-  gender,
-  country,
-  profilePicture,
-}: IPersonCardProps) {
+function PersonCard({ name, surname, birthday, gender, country, picture }: IPersonCardProps) {
   return (
     <div className="person-card">
       <PersonCardValue name="Name" value={name} />
@@ -26,7 +19,7 @@ function PersonCard({
       <PersonCardValue name="Birthday" value={birthday} />
       <PersonCardValue name="Gender" value={gender} />
       <PersonCardValue name="Country" value={country} />
-      <PersonCardValue name="Profile picture" value={profilePicture} />
+      <PersonCardValue name="Profile picture" value={picture} />
     </div>
   );
 }

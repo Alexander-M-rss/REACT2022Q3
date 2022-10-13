@@ -1,39 +1,40 @@
 import React from 'react';
 import './form.css';
-import { InputRef, MsgTemplates, NotValidInputs } from './formTypes';
+import { IFormValues, NotValidInputs } from './formTypes';
 import LabledInput from './labledInput';
 import validateForm from './helpers';
 import LabledSelect from './labledSelect';
 import LabledSwitcher from './labledSwitcher';
 import { IPersonCardProps } from './personCard';
 
+interface IFormFields {
+  name: HTMLInputElement;
+  surname: HTMLInputElement;
+  birthday: HTMLInputElement;
+  picture: HTMLInputElement;
+  consent: HTMLInputElement;
+  country: HTMLSelectElement;
+  gender: HTMLInputElement;
+}
+
 interface IFormState {
   isSubmitDisabled: boolean;
   isNotValid: NotValidInputs;
 }
 
-interface IFormsProps {
+interface IFormProps {
   addPersonCard: (personCard: IPersonCardProps) => void;
 }
 
-class Form extends React.Component<IFormsProps, IFormState> {
-  errMsg: MsgTemplates = {
-    nameInput: 'should not be empty',
-    surnameInput: 'should not be empty',
-    birthdayInput: 'select more than 11yo',
-    fileInput: 'please select picture',
-    consentInput: 'please check to proceed',
-    countryInput: 'please select country',
-    genderInput: 'please select your gender',
-  };
-
-  inputRefs: InputRef = {
-    nameInput: React.createRef<HTMLInputElement>(),
-    surnameInput: React.createRef<HTMLInputElement>(),
-    birthdayInput: React.createRef<HTMLInputElement>(),
-    fileInput: React.createRef<HTMLInputElement>(),
-    consentInput: React.createRef<HTMLInputElement>(),
-    countryInput: React.createRef<HTMLSelectElement>(),
+class Form extends React.Component<IFormProps, IFormState> {
+  errMsg: IFormValues = {
+    name: 'should not be empty',
+    surname: 'should not be empty',
+    birthday: 'select more than 11yo',
+    picture: 'please select picture',
+    consent: 'please check to proceed',
+    country: 'please select country',
+    gender: 'please select your gender',
   };
 
   notValidInputsCount: number;
@@ -41,48 +42,58 @@ class Form extends React.Component<IFormsProps, IFormState> {
 
   countries = ['Italy', 'Norway', 'Germany', 'Spain', 'Sweden', 'Ukraine', 'USA'];
   genders = ['male', 'female'];
-  gendersRefs: React.RefObject<HTMLInputElement>[];
+  formRef: React.RefObject<HTMLFormElement & IFormFields>;
 
-  constructor(props: IFormsProps) {
+  constructor(props: IFormProps) {
     super(props);
     this.state = {
       isSubmitDisabled: true,
       isNotValid: {
-        nameInput: false,
-        surnameInput: false,
-        birthdayInput: false,
-        fileInput: false,
-        consentInput: false,
-        countryInput: false,
-        genderInput: false,
+        name: false,
+        surname: false,
+        birthday: false,
+        picture: false,
+        consent: false,
+        country: false,
+        gender: false,
       },
     };
     this.notValidInputsCount = 0;
     this.isFirstFilling = true;
-    this.gendersRefs = this.genders.map(() => {
-      return React.createRef<HTMLInputElement>();
-    });
+    this.formRef = React.createRef<HTMLFormElement & IFormFields>();
   }
 
-  getGenderValue = () => {
-    const valueTarget = this.gendersRefs.find((ref) => ref?.current?.checked);
+  getFormValues = (): IFormValues => {
+    if (this.formRef.current) {
+      const { name, surname, birthday, gender, country, picture, consent } = this.formRef.current;
+      return {
+        name: name.value,
+        surname: surname.value,
+        birthday: birthday.value,
+        gender: gender.value,
+        country: country.value,
+        picture: picture.value,
+        consent: consent.checked ? 'yes' : '',
+      };
+    }
 
-    return valueTarget?.current?.value || '';
+    return {
+      name: '',
+      surname: '',
+      birthday: '',
+      gender: '',
+      country: '',
+      picture: '',
+      consent: '',
+    };
   };
 
   handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const checkbox = (this.inputRefs.consentInput as React.RefObject<HTMLInputElement>).current;
+    const formValues = this.getFormValues();
 
-    if (!checkbox) {
-      return;
-    }
-    checkbox.value = checkbox.checked ? 'consent' : '';
-    const { isNotValid, isNotValidInputsCount } = validateForm(
-      this.inputRefs,
-      this.getGenderValue()
-    );
+    const { isNotValid, isNotValidInputsCount } = validateForm(formValues);
 
     if (isNotValidInputsCount) {
       this.notValidInputsCount = isNotValidInputsCount;
@@ -90,16 +101,7 @@ class Form extends React.Component<IFormsProps, IFormState> {
       return;
     }
 
-    console.log('add');
-
-    this.props.addPersonCard({
-      name: this.inputRefs.nameInput.current?.value || '',
-      surname: this.inputRefs.surnameInput.current?.value || '',
-      birthday: this.inputRefs.birthdayInput.current?.value || '',
-      gender: this.getGenderValue(),
-      country: this.inputRefs.countryInput.current?.value || '',
-      profilePicture: this.inputRefs.fileInput.current?.value || '',
-    });
+    this.props.addPersonCard(formValues);
   };
 
   resetIsNotValid: React.ChangeEventHandler<HTMLInputElement | HTMLSelectElement> = (e) => {
@@ -110,7 +112,7 @@ class Form extends React.Component<IFormsProps, IFormState> {
     }
     this.setState((prevState) => {
       const isNotValid = prevState.isNotValid;
-      const key = e.target.name + 'Input';
+      const key = e.target.name;
 
       if (Object.hasOwn(isNotValid, key)) {
         isNotValid[key as keyof NotValidInputs] = false;
@@ -135,63 +137,56 @@ class Form extends React.Component<IFormsProps, IFormState> {
 
   render() {
     return (
-      <form className="form" onSubmit={this.handleSubmit}>
+      <form className="form" onSubmit={this.handleSubmit} ref={this.formRef}>
         <LabledInput
           type="text"
           name="name"
           text="Name"
-          errMsg={this.state.isNotValid.nameInput ? this.errMsg.nameInput : ''}
-          reference={this.inputRefs.nameInput as React.RefObject<HTMLInputElement>}
-          onChangeHandler={this.setHandler(this.state.isNotValid.nameInput)}
+          errMsg={this.state.isNotValid.name ? this.errMsg.name : ''}
+          onChangeHandler={this.setHandler(this.state.isNotValid.name)}
         />
         <LabledInput
           type="text"
           name="surname"
           text="Surname"
-          errMsg={this.state.isNotValid.surnameInput ? this.errMsg.surnameInput : ''}
-          reference={this.inputRefs.surnameInput as React.RefObject<HTMLInputElement>}
-          onChangeHandler={this.setHandler(this.state.isNotValid.surnameInput)}
+          errMsg={this.state.isNotValid.surname ? this.errMsg.surname : ''}
+          onChangeHandler={this.setHandler(this.state.isNotValid.surname)}
         />
         <LabledInput
           type="date"
           name="birthday"
           text="Birthday"
-          errMsg={this.state.isNotValid.birthdayInput ? this.errMsg.birthdayInput : ''}
-          reference={this.inputRefs.birthdayInput as React.RefObject<HTMLInputElement>}
-          onChangeHandler={this.setHandler(this.state.isNotValid.birthdayInput)}
+          errMsg={this.state.isNotValid.birthday ? this.errMsg.birthday : ''}
+          onChangeHandler={this.setHandler(this.state.isNotValid.birthday)}
         />
         <LabledSwitcher
           name="gender"
           text="Gender"
           options={this.genders}
-          errMsg={this.state.isNotValid.genderInput ? this.errMsg.genderInput : ''}
-          references={this.gendersRefs}
-          onChangeHandler={this.setHandler(this.state.isNotValid.genderInput)}
+          errMsg={this.state.isNotValid.gender ? this.errMsg.gender : ''}
+          onChangeHandler={this.setHandler(this.state.isNotValid.gender)}
         />
         <LabledSelect
           name="country"
           text="Country"
           options={this.countries}
-          errMsg={this.state.isNotValid.countryInput ? this.errMsg.countryInput : ''}
-          reference={this.inputRefs.countryInput as React.RefObject<HTMLSelectElement>}
-          onChangeHandler={this.setHandler(this.state.isNotValid.countryInput)}
+          errMsg={this.state.isNotValid.country ? this.errMsg.country : ''}
+          onChangeHandler={this.setHandler(this.state.isNotValid.country)}
         />
         <LabledInput
           type="file"
-          name="file"
+          name="picture"
           text="Profile picture"
-          errMsg={this.state.isNotValid.fileInput ? this.errMsg.fileInput : ''}
-          reference={this.inputRefs.fileInput as React.RefObject<HTMLInputElement>}
-          onChangeHandler={this.setHandler(this.state.isNotValid.fileInput)}
+          errMsg={this.state.isNotValid.picture ? this.errMsg.picture : ''}
+          onChangeHandler={this.setHandler(this.state.isNotValid.picture)}
           accept=".jpg,.jpeg,.png"
         />
         <LabledInput
           type="checkbox"
           name="consent"
           text="I consent to my personal data"
-          errMsg={this.state.isNotValid.consentInput ? this.errMsg.consentInput : ''}
-          reference={this.inputRefs.consentInput as React.RefObject<HTMLInputElement>}
-          onChangeHandler={this.setHandler(this.state.isNotValid.consentInput)}
+          errMsg={this.state.isNotValid.consent ? this.errMsg.consent : ''}
+          onChangeHandler={this.setHandler(this.state.isNotValid.consent)}
         />
         <input
           type="submit"
