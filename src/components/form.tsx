@@ -5,13 +5,18 @@ import LabledInput from './labledInput';
 import validateForm from './helpers';
 import LabledSelect from './labledSelect';
 import LabledSwitcher from './labledSwitcher';
+import { IPersonCardProps } from './personCard';
 
 interface IFormState {
   isSubmitDisabled: boolean;
   isNotValid: NotValidInputs;
 }
 
-class Form extends React.Component<unknown, IFormState> {
+interface IFormsProps {
+  addPersonCard: (personCard: IPersonCardProps) => void;
+}
+
+class Form extends React.Component<IFormsProps, IFormState> {
   errMsg: MsgTemplates = {
     nameInput: 'should not be empty',
     surnameInput: 'should not be empty',
@@ -38,7 +43,7 @@ class Form extends React.Component<unknown, IFormState> {
   genders = ['male', 'female'];
   gendersRefs: React.RefObject<HTMLInputElement>[];
 
-  constructor(props = {}) {
+  constructor(props: IFormsProps) {
     super(props);
     this.state = {
       isSubmitDisabled: true,
@@ -82,7 +87,19 @@ class Form extends React.Component<unknown, IFormState> {
     if (isNotValidInputsCount) {
       this.notValidInputsCount = isNotValidInputsCount;
       this.setState({ isNotValid: isNotValid, isSubmitDisabled: true });
+      return;
     }
+
+    console.log('add');
+
+    this.props.addPersonCard({
+      name: this.inputRefs.nameInput.current?.value || '',
+      surname: this.inputRefs.surnameInput.current?.value || '',
+      birthday: this.inputRefs.birthdayInput.current?.value || '',
+      gender: this.getGenderValue(),
+      country: this.inputRefs.countryInput.current?.value || '',
+      profilePicture: this.inputRefs.fileInput.current?.value || '',
+    });
   };
 
   resetIsNotValid: React.ChangeEventHandler<HTMLInputElement | HTMLSelectElement> = (e) => {

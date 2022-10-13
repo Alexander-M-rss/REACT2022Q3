@@ -1,0 +1,9 @@
+.person-card-value {
+  margin: 5px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.person-card-value__value {
+  width: 190px;
+}
