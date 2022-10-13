@@ -1,46 +1,38 @@
-import { InputRef, NotValidInputs } from './formTypes';
+import { IFormValues, NotValidInputs } from './formTypes';
 
 const MIN_AGE = 12;
 
-function validateForm(
-  inputRefs: InputRef,
-  gender: string
-): {
+function validateForm(formValues: IFormValues): {
   isNotValid: NotValidInputs;
   isNotValidInputsCount: number;
 } {
   const isNotValid: NotValidInputs = {
-    nameInput: false,
-    surnameInput: false,
-    birthdayInput: false,
-    fileInput: false,
-    consentInput: false,
-    countryInput: false,
-    genderInput: false,
+    name: false,
+    surname: false,
+    birthday: false,
+    picture: false,
+    consent: false,
+    country: false,
+    gender: false,
   };
-  const keys = Object.keys(inputRefs);
+  const keys = Object.keys(formValues);
   let isNotValidInputsCount = 0;
 
   for (const key of keys) {
-    if (!inputRefs[key as keyof InputRef].current?.value) {
-      isNotValid[key as keyof InputRef] = true;
+    if (!formValues[key as keyof IFormValues]) {
+      isNotValid[key as keyof IFormValues] = true;
       isNotValidInputsCount += 1;
     }
   }
 
-  if (inputRefs.birthdayInput.current?.value) {
+  if (formValues.birthday) {
     const today = new Date().getFullYear();
-    const birthday = new Date(inputRefs.birthdayInput.current.value).getFullYear();
+    const birthday = new Date(formValues.birthday).getFullYear();
 
     if (MIN_AGE > today - birthday) {
-      isNotValid.birthdayInput = true;
+      isNotValid.birthday = true;
       isNotValidInputsCount += 1;
     }
-  }
-
-  if (!gender) {
-    isNotValid.genderInput = true;
-    isNotValidInputsCount += 1;
   }
 
   return { isNotValid, isNotValidInputsCount };

@@ -6,7 +6,6 @@ interface ISwitcherProps {
   name: string;
   options: string[];
   errMsg: string;
-  references: React.RefObject<HTMLInputElement>[];
   onChangeHandler?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
@@ -16,7 +15,7 @@ class LabledSwitcher extends React.Component<ISwitcherProps, unknown> {
   }
 
   render() {
-    const { text, name, options, errMsg, references, onChangeHandler } = this.props;
+    const { text, name, options, errMsg, onChangeHandler } = this.props;
 
     return (
       <label className="labled-switcher__label" htmlFor={name}>
@@ -30,7 +29,6 @@ class LabledSwitcher extends React.Component<ISwitcherProps, unknown> {
                   name={name}
                   value={option}
                   className="labled-switcher__input"
-                  ref={references[i]}
                   onChange={onChangeHandler}
                 />
                 {option}

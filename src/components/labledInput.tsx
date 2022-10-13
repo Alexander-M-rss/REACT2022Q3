@@ -6,7 +6,6 @@ interface IInputProps {
   text: string;
   name: string;
   errMsg: string;
-  reference: React.RefObject<HTMLInputElement>;
   onChangeHandler?: React.ChangeEventHandler<HTMLInputElement>;
   accept?: string;
 }
@@ -30,7 +29,6 @@ class LabledInput extends React.Component<IInputProps, unknown> {
             autoComplete="off"
             placeholder={text}
             className="labled-input__input"
-            ref={this.props.reference}
             defaultValue={type === 'checkbox' ? 'off' : ''}
             onChange={onChangeHandler}
             accept={this.props.accept}
