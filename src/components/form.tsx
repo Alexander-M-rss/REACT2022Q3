@@ -19,6 +19,7 @@ interface IFormFields {
 
 interface IFormState {
   isSubmitDisabled: boolean;
+  isFirstFilling: boolean;
   isNotValid: NotValidInputs;
 }
 
@@ -38,7 +39,6 @@ class Form extends React.Component<IFormProps, IFormState> {
   };
 
   notValidInputsCount: number;
-  isFirstFilling: boolean;
 
   countries = ['Italy', 'Norway', 'Germany', 'Spain', 'Sweden', 'Ukraine', 'USA'];
   genders = ['male', 'female'];
@@ -48,6 +48,7 @@ class Form extends React.Component<IFormProps, IFormState> {
     super(props);
     this.state = {
       isSubmitDisabled: true,
+      isFirstFilling: true,
       isNotValid: {
         name: false,
         surname: false,
@@ -59,7 +60,6 @@ class Form extends React.Component<IFormProps, IFormState> {
       },
     };
     this.notValidInputsCount = 0;
-    this.isFirstFilling = true;
     this.formRef = React.createRef<HTMLFormElement & IFormFields>();
   }
 
@@ -102,6 +102,8 @@ class Form extends React.Component<IFormProps, IFormState> {
     }
 
     this.props.addPersonCard(formValues);
+    this.formRef.current?.reset();
+    this.setState({ isSubmitDisabled: true, isFirstFilling: true });
   };
 
   resetIsNotValid: React.ChangeEventHandler<HTMLInputElement | HTMLSelectElement> = (e) => {
@@ -123,16 +125,11 @@ class Form extends React.Component<IFormProps, IFormState> {
   };
 
   enableSubmit: React.ChangeEventHandler<HTMLInputElement | HTMLSelectElement> = () => {
-    this.isFirstFilling = false;
-    this.setState({ isSubmitDisabled: false });
+    this.setState({ isSubmitDisabled: false, isFirstFilling: false });
   };
 
-  setHandler = (isNotValidInput: boolean) => {
-    return this.isFirstFilling
-      ? this.enableSubmit
-      : isNotValidInput
-      ? this.resetIsNotValid
-      : undefined;
+  setHandler = (isNotValidInput: boolean, isFirstFilling: boolean) => {
+    return isFirstFilling ? this.enableSubmit : isNotValidInput ? this.resetIsNotValid : undefined;
   };
 
   render() {
@@ -143,42 +140,54 @@ class Form extends React.Component<IFormProps, IFormState> {
           name="name"
           text="Name"
           errMsg={this.state.isNotValid.name ? this.errMsg.name : ''}
-          onChangeHandler={this.setHandler(this.state.isNotValid.name)}
+          onChangeHandler={this.setHandler(this.state.isNotValid.name, this.state.isFirstFilling)}
         />
         <LabledInput
           type="text"
           name="surname"
           text="Surname"
           errMsg={this.state.isNotValid.surname ? this.errMsg.surname : ''}
-          onChangeHandler={this.setHandler(this.state.isNotValid.surname)}
+          onChangeHandler={this.setHandler(
+            this.state.isNotValid.surname,
+            this.state.isFirstFilling
+          )}
         />
         <LabledInput
           type="date"
           name="birthday"
           text="Birthday"
           errMsg={this.state.isNotValid.birthday ? this.errMsg.birthday : ''}
-          onChangeHandler={this.setHandler(this.state.isNotValid.birthday)}
+          onChangeHandler={this.setHandler(
+            this.state.isNotValid.birthday,
+            this.state.isFirstFilling
+          )}
         />
         <LabledSwitcher
           name="gender"
           text="Gender"
           options={this.genders}
           errMsg={this.state.isNotValid.gender ? this.errMsg.gender : ''}
-          onChangeHandler={this.setHandler(this.state.isNotValid.gender)}
+          onChangeHandler={this.setHandler(this.state.isNotValid.gender, this.state.isFirstFilling)}
         />
         <LabledSelect
           name="country"
           text="Country"
           options={this.countries}
           errMsg={this.state.isNotValid.country ? this.errMsg.country : ''}
-          onChangeHandler={this.setHandler(this.state.isNotValid.country)}
+          onChangeHandler={this.setHandler(
+            this.state.isNotValid.country,
+            this.state.isFirstFilling
+          )}
         />
         <LabledInput
           type="file"
           name="picture"
           text="Profile picture"
           errMsg={this.state.isNotValid.picture ? this.errMsg.picture : ''}
-          onChangeHandler={this.setHandler(this.state.isNotValid.picture)}
+          onChangeHandler={this.setHandler(
+            this.state.isNotValid.picture,
+            this.state.isFirstFilling
+          )}
           accept=".jpg,.jpeg,.png"
         />
         <LabledInput
@@ -186,7 +195,10 @@ class Form extends React.Component<IFormProps, IFormState> {
           name="consent"
           text="I consent to my personal data"
           errMsg={this.state.isNotValid.consent ? this.errMsg.consent : ''}
-          onChangeHandler={this.setHandler(this.state.isNotValid.consent)}
+          onChangeHandler={this.setHandler(
+            this.state.isNotValid.consent,
+            this.state.isFirstFilling
+          )}
         />
         <input
           type="submit"
