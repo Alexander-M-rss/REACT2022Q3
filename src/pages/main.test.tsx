@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import Main from './main';
 
-describe('NotFound page', () => {
+describe('Main page', () => {
   it('renders component', () => {
     render(
       <BrowserRouter>
