@@ -7,16 +7,6 @@ import LabledSelect from './labledSelect';
 import LabledSwitcher from './labledSwitcher';
 import { IPersonCardProps } from './personCard';
 
-interface IFormFields {
-  name: HTMLInputElement;
-  surname: HTMLInputElement;
-  birthday: HTMLInputElement;
-  picture: HTMLInputElement;
-  consent: HTMLInputElement;
-  country: HTMLSelectElement;
-  gender: HTMLInputElement;
-}
-
 interface IFormState {
   isSubmitDisabled: boolean;
   isFirstFilling: boolean;
@@ -42,7 +32,7 @@ class Form extends React.Component<IFormProps, IFormState> {
 
   countries = ['Italy', 'Norway', 'Germany', 'Spain', 'Sweden', 'Ukraine', 'USA'];
   genders = ['male', 'female'];
-  formRef: React.RefObject<HTMLFormElement & IFormFields>;
+  formRef: React.RefObject<HTMLFormElement>;
 
   constructor(props: IFormProps) {
     super(props);
@@ -60,20 +50,20 @@ class Form extends React.Component<IFormProps, IFormState> {
       },
     };
     this.notValidInputsCount = 0;
-    this.formRef = React.createRef<HTMLFormElement & IFormFields>();
+    this.formRef = React.createRef<HTMLFormElement>();
   }
 
   getFormValues = (): IFormValues => {
-    if (this.formRef.current) {
-      const { name, surname, birthday, gender, country, picture, consent } = this.formRef.current;
+    const formElements = this.formRef.current?.elements;
+    if (formElements) {
       return {
-        name: name.value,
-        surname: surname.value,
-        birthday: birthday.value,
-        gender: gender.value,
-        country: country.value,
-        picture: picture.value,
-        consent: consent.checked ? 'yes' : '',
+        name: (formElements.namedItem('name') as HTMLInputElement).value,
+        surname: (formElements.namedItem('surname') as HTMLInputElement).value,
+        birthday: (formElements.namedItem('birthday') as HTMLInputElement).value,
+        gender: (formElements.namedItem('gender') as HTMLInputElement).value,
+        country: (formElements.namedItem('country') as HTMLSelectElement).value,
+        picture: (formElements.namedItem('picture') as HTMLInputElement).value,
+        consent: (formElements.namedItem('consent') as HTMLInputElement).checked ? 'yes' : '',
       };
     }
 
