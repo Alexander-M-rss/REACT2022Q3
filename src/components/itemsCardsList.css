@@ -4,6 +4,7 @@
   align-items: center;
   flex-wrap: wrap;
   overflow-y: auto;
+  flex-grow: 1;
 }
 
 .items-cards-list::-webkit-scrollbar {

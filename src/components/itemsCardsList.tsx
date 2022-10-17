@@ -4,18 +4,13 @@ import { IItemData } from '../data/items';
 import './itemsCardsList.css';
 
 interface IItemsCardsListProps {
-  heightOffset: string;
   baseImgUrl: string;
   items: IItemData[];
 }
 
-function ItemsCardsList({ heightOffset, baseImgUrl, items }: IItemsCardsListProps) {
+function ItemsCardsList({ baseImgUrl, items }: IItemsCardsListProps) {
   return (
-    <section
-      className="items-cards-list"
-      style={{ height: `calc(100vh - (${heightOffset}))` }}
-      data-testid="items-cards-list"
-    >
+    <section className="items-cards-list" data-testid="items-cards-list">
       {items.map((item) => {
         return (
           <ItemCard
