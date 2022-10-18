@@ -1,51 +1,34 @@
 import React from 'react';
 import './itemCard.css';
+import { IItemData } from 'data/items';
+import ItemCardValue from './itemCardValue';
 
-interface IItemCardProps {
-  title: string;
-  imgUrl: string;
-  overview: string;
-  popularity: string;
-  vote_average: string;
-  vote_count: string;
-  release_date: string;
-}
+type ItemCardProps = { item: IItemData; itemIdx: string };
 
-function ItemCard({
-  title,
-  imgUrl,
-  overview,
-  popularity,
-  vote_average,
-  vote_count,
-  release_date,
-}: IItemCardProps) {
+export const valueNames: Array<keyof IItemData> = [
+  'race',
+  'gender',
+  'birth',
+  'height',
+  'hair',
+  'spouse',
+  'realm',
+  'death',
+];
+
+function ItemCard({ item, itemIdx }: ItemCardProps) {
   return (
-    <div className="item-card__wrapper">
-      <div className="item-card__img">
-        <img src={imgUrl} alt={title} />
-        <div className="item-card__overview">
-          <h3>Overview:</h3>
-          <span>{overview}</span>
-        </div>
-      </div>
-      <h2>{title}</h2>
-      <div className="item-card__info">
-        <p>
-          <span>Popularity:</span>
-          <span> {popularity}</span>
-        </p>
-        <p>
-          <span>Rating TMdB:</span>
-          <span> {vote_average}</span>
-          <span>/10.0 ({vote_count} votes)</span>
-        </p>
-        <p>
-          <span>Date of release:</span>
-          <span> {release_date}</span>
-        </p>
-      </div>
-      <div className="item-card__rating">{vote_average}</div>
+    <div id={itemIdx} className="item-card">
+      <h2>{item.name}</h2>
+      {valueNames.map((valueName) => {
+        const value = item[valueName as keyof IItemData];
+        return (
+          <>{value && <ItemCardValue key={valueName} valueName={valueName} value={value} />}</>
+        );
+      })}
+      <a className="item-card__btn" href={item.wikiUrl} target="blank">
+        More info
+      </a>
     </div>
   );
 }
