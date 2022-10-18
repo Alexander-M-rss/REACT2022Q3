@@ -11,7 +11,7 @@ function ItemsCardsList({ items }: IItemsCardsListProps) {
   return (
     <section className="items-cards-list" data-testid="items-cards-list">
       {items.map((item, idx) => {
-        return <ItemCard key={item._id} itemIdx={idx.toString()} item={item} />;
+        return <ItemCard key={item._id} itemIdx={idx.toString()} item={item} isMoreInfo={false} />;
       })}
     </section>
   );

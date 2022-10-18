@@ -1,13 +1,13 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import ItemCard, { valueNames } from './itemCard';
+import ItemCard, { valueNamesFullCard } from './itemCard';
 import { testItem } from 'data/items';
 
 describe('ItemCard', () => {
   it('renders component', () => {
-    render(<ItemCard itemIdx={'indexValue'} item={testItem} />);
+    render(<ItemCard itemIdx={'indexValue'} item={testItem} isMoreInfo={true} />);
     expect(screen.getByText(new RegExp(testItem.name.toString()))).toBeInTheDocument();
-    valueNames.forEach((valueName) =>
+    valueNamesFullCard.forEach((valueName) =>
       expect(screen.getByText(new RegExp(testItem[valueName].toString()))).toBeInTheDocument()
     );
     expect(screen.getByText(/More info/)).toBeInTheDocument();

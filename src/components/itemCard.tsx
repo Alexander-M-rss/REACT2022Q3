@@ -3,9 +3,14 @@ import './itemCard.css';
 import { IItemData } from 'data/items';
 import ItemCardValue from './itemCardValue';
 
-type ItemCardProps = { item: IItemData; itemIdx: string };
+type ItemCardKeys = keyof IItemData;
+type ItemCardProps = {
+  item: IItemData;
+  itemIdx: string;
+  isMoreInfo: boolean;
+};
 
-export const valueNames: Array<keyof IItemData> = [
+export const valueNamesFullCard: ItemCardKeys[] = [
   'race',
   'gender',
   'birth',
@@ -16,7 +21,11 @@ export const valueNames: Array<keyof IItemData> = [
   'death',
 ];
 
-function ItemCard({ item, itemIdx }: ItemCardProps) {
+const valueNamesShortCard: ItemCardKeys[] = ['race'];
+
+function ItemCard({ item, itemIdx, isMoreInfo }: ItemCardProps) {
+  const valueNames = isMoreInfo ? valueNamesFullCard : valueNamesShortCard;
+
   return (
     <div id={itemIdx} className="item-card">
       <h2>{item.name}</h2>
@@ -26,9 +35,11 @@ function ItemCard({ item, itemIdx }: ItemCardProps) {
           <>{value && <ItemCardValue key={valueName} valueName={valueName} value={value} />}</>
         );
       })}
-      <a className="item-card__btn" href={item.wikiUrl} target="blank">
-        More info
-      </a>
+      {isMoreInfo && (
+        <a className="item-card__btn" href={item.wikiUrl} target="blank">
+          More info
+        </a>
+      )}
     </div>
   );
 }
