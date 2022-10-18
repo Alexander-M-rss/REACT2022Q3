@@ -2,7 +2,7 @@ import React from 'react';
 import Header, { links } from '../components/header';
 import SearchBar from '../components/searchBar';
 import ItemsCardsList from '../components/itemsCardsList';
-import itemsData, { BASE_IMG_URL } from '../data/items';
+import itemsData from '../data/items';
 
 class Main extends React.Component {
   constructor(props = {}) {
@@ -23,7 +23,7 @@ class Main extends React.Component {
       <>
         <Header title="Main Page" links={[links.forms, links.about]} />
         <SearchBar placeholder="Search" />
-        <ItemsCardsList items={itemsData} baseImgUrl={BASE_IMG_URL} />
+        <ItemsCardsList items={itemsData} />
       </>
     );
   }
