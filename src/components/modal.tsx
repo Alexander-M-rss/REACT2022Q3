@@ -11,7 +11,7 @@ interface IModalProps {
 
 function Modal({ children, closeHandler }: IModalProps) {
   return (
-    <div className="modal-overlay" onClick={closeHandler} id={OVERLAY_ID}>
+    <div className="modal-overlay" onClick={closeHandler} id={OVERLAY_ID} data-testid={OVERLAY_ID}>
       <div className="modal-content">
         {children}
         <button className="modal-close" type="button" id={CLOSE_ID}></button>
