@@ -6,8 +6,9 @@ import ItemCardValue from './itemCardValue';
 type ItemCardKeys = keyof IItemData;
 type ItemCardProps = {
   item: IItemData;
-  itemIdx: string;
-  isMoreInfo: boolean;
+  itemIdx?: string;
+  isFullInfo: boolean;
+  onClick: (event: React.MouseEvent) => void;
 };
 
 export const valueNamesFullCard: ItemCardKeys[] = [
@@ -21,21 +22,21 @@ export const valueNamesFullCard: ItemCardKeys[] = [
   'death',
 ];
 
-const valueNamesShortCard: ItemCardKeys[] = ['race'];
+export const valueNamesShortCard: ItemCardKeys[] = ['race'];
 
-function ItemCard({ item, itemIdx, isMoreInfo }: ItemCardProps) {
-  const valueNames = isMoreInfo ? valueNamesFullCard : valueNamesShortCard;
+function ItemCard({ item, itemIdx, isFullInfo, onClick }: ItemCardProps) {
+  const valueNames = isFullInfo ? valueNamesFullCard : valueNamesShortCard;
 
   return (
-    <div id={itemIdx} className="item-card">
+    <div id={itemIdx} className="item-card" onClick={onClick} key={item._id}>
       <h2>{item.name}</h2>
-      {valueNames.map((valueName) => {
-        const value = item[valueName as keyof IItemData];
-        return (
-          <>{value && <ItemCardValue key={valueName} valueName={valueName} value={value} />}</>
-        );
-      })}
-      {isMoreInfo && (
+      {valueNames
+        .filter((valueName) => item[valueName as keyof IItemData])
+        .map((valueName) => {
+          const value = item[valueName as keyof IItemData];
+          return <ItemCardValue key={valueName} valueName={valueName} value={value} />;
+        })}
+      {isFullInfo && (
         <a className="item-card__btn" href={item.wikiUrl} target="blank">
           More info
         </a>
