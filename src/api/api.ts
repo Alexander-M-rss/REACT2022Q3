@@ -62,7 +62,7 @@ export const getItems = async (
     if (resp.ok) {
       const { docs, pages } = (await resp.json()) as IApiResp<IItemData[]>;
 
-      if (docs) {
+      if (docs.length) {
         itemResp.items = docs;
       } else {
         itemResp.errMsg = 'Nothing has been found';
