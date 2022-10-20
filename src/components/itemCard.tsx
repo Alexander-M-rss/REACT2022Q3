@@ -1,6 +1,6 @@
 import React from 'react';
 import './itemCard.css';
-import { IItemData } from 'data/items';
+import { IItemData } from '../api/api';
 import ItemCardValue from './itemCardValue';
 
 type ItemCardKeys = keyof IItemData;
