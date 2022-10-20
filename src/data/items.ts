@@ -1,16 +1,4 @@
-export interface IItemData {
-  _id: string;
-  name: string;
-  height: string;
-  race: string;
-  gender: string;
-  birth: string;
-  spouse: string;
-  death: string;
-  realm: string;
-  hair: string;
-  wikiUrl: string;
-}
+import { IItemData } from '../api/api';
 
 const itemsData: IItemData[] = [
   {
