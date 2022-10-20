@@ -28,7 +28,13 @@ function ItemCard({ item, itemIdx, isFullInfo, onClick }: ItemCardProps) {
   const valueNames = isFullInfo ? valueNamesFullCard : valueNamesShortCard;
 
   return (
-    <div id={itemIdx} className="item-card" onClick={onClick} key={item._id}>
+    <div
+      id={itemIdx}
+      className="item-card"
+      onClick={onClick}
+      key={item._id}
+      data-testid="item-card"
+    >
       <h2>{item.name}</h2>
       {valueNames
         .filter((valueName) => item[valueName as keyof IItemData])
