@@ -5,18 +5,26 @@ import ItemsCardsList from '../components/itemsCardsList';
 import { getItems, IItemData } from '../api/api';
 import Modal, { OVERLAY_ID, CLOSE_ID } from 'components/modal';
 import ItemCard from 'components/itemCard';
+import DownloadIndicator from 'components/downloadIndicator';
 
 interface IMainPageState {
   itemsData: IItemData[];
   isModalVisible: boolean;
   itemModalIdx: number;
   errMsg: string;
+  isDataLoading: boolean;
 }
 
 class Main extends React.Component<unknown, IMainPageState> {
   constructor(props = {}) {
     super(props);
-    this.state = { itemsData: [], isModalVisible: false, itemModalIdx: 0, errMsg: '' };
+    this.state = {
+      itemsData: [],
+      isModalVisible: false,
+      itemModalIdx: 0,
+      errMsg: '',
+      isDataLoading: true,
+    };
   }
 
   componentDidMount = () => {
@@ -24,8 +32,9 @@ class Main extends React.Component<unknown, IMainPageState> {
   };
 
   getItemsData = async (search: string) => {
+    this.setState({ itemsData: [], isDataLoading: true });
     const data = await getItems(search);
-    this.setState({ itemsData: data.items, errMsg: data.errMsg });
+    this.setState({ itemsData: data.items, errMsg: data.errMsg, isDataLoading: false });
   };
 
   showModal: React.MouseEventHandler = (e) => {
@@ -47,11 +56,14 @@ class Main extends React.Component<unknown, IMainPageState> {
       <>
         <Header title="Main Page" links={[links.forms, links.about]} />
         <SearchBar placeholder="Search" searchHandler={this.getItemsData} />
-        <ItemsCardsList
-          items={this.state.itemsData}
-          errMsg={this.state.errMsg}
-          onClick={this.showModal}
-        />
+        {this.state.isDataLoading && <DownloadIndicator />}
+        {!this.state.isDataLoading && (
+          <ItemsCardsList
+            items={this.state.itemsData}
+            errMsg={this.state.errMsg}
+            onClick={this.showModal}
+          />
+        )}
         {this.state.isModalVisible && (
           <Modal closeHandler={this.closeModal}>
             <ItemCard
