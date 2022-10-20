@@ -38,7 +38,7 @@ describe('SearchBar', () => {
     expect(screen.getByRole('textbox')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Search test')).toBeInTheDocument();
   });
-  it('changes input vakue by onCnange event', () => {
+  it('changes input value by onCnange event', () => {
     render(<SearchBar placeholder="Search test" searchHandler={handleSearch} />);
     userEvent.type(screen.getByRole('textbox'), 'test search');
     expect(screen.getByDisplayValue('test search')).toBeInTheDocument();
@@ -63,5 +63,18 @@ describe('SearchBar', () => {
     userEvent.type(screen.getByRole('textbox'), 'set value to localStorage');
     cleanup();
     expect(localStorage.getItem('searchBarValue')).toBe('set value to localStorage');
+  });
+  it('submits search by submit button click', () => {
+    render(<SearchBar placeholder="Search test" searchHandler={handleSearch} />);
+    userEvent.type(screen.getByRole('textbox'), '{selectall}test search');
+    userEvent.click(screen.getAllByRole('button')[0]);
+    expect(handleSearch).toBeCalledTimes(1);
+    expect(handleSearch).toBeCalledWith('test search');
+  });
+  it('submits search by input Enter in textbox', () => {
+    render(<SearchBar placeholder="Search test" searchHandler={handleSearch} />);
+    userEvent.type(screen.getByRole('textbox'), '{selectall}test search{Enter}');
+    expect(handleSearch).toBeCalledTimes(1);
+    expect(handleSearch).toBeCalledWith('test search');
   });
 });
