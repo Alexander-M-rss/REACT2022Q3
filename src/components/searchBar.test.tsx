@@ -29,38 +29,37 @@ function localStorageMock() {
   };
 }
 
+const handleSearch = jest.fn();
+
 describe('SearchBar', () => {
   it('renders component', () => {
-    render(<SearchBar placeholder="Search test" />);
+    render(<SearchBar placeholder="Search test" searchHandler={handleSearch} />);
     expect(screen.getAllByRole('button').length).toBe(2);
     expect(screen.getByRole('textbox')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Search test')).toBeInTheDocument();
   });
   it('changes input vakue by onCnange event', () => {
-    render(<SearchBar placeholder="Search test" />);
+    render(<SearchBar placeholder="Search test" searchHandler={handleSearch} />);
     userEvent.type(screen.getByRole('textbox'), 'test search');
     expect(screen.getByDisplayValue('test search')).toBeInTheDocument();
   });
   it('clears input value by clear button onClick event', () => {
-    render(<SearchBar placeholder="Search test" />);
+    render(<SearchBar placeholder="Search test" searchHandler={handleSearch} />);
     userEvent.click(screen.getAllByRole('button')[1]);
     userEvent.type(screen.getByRole('textbox'), 'test search');
     expect(screen.getByDisplayValue('test search')).toBeInTheDocument();
     userEvent.click(screen.getAllByRole('button')[1]);
     expect(screen.getByRole('textbox')).toHaveValue('');
   });
-
   localStorage = localStorageMock();
-
   it('renders input value from localStorage', () => {
     localStorage.setItem('searchBarValue', 'set value from localStorage');
-    render(<SearchBar placeholder="Search test" />);
+    render(<SearchBar placeholder="Search test" searchHandler={handleSearch} />);
     expect(screen.getByRole('textbox')).toHaveValue('set value from localStorage');
   });
-
   it('saves input value to localStorage', () => {
     localStorage.clear();
-    render(<SearchBar placeholder="Search test" />);
+    render(<SearchBar placeholder="Search test" searchHandler={handleSearch} />);
     userEvent.type(screen.getByRole('textbox'), 'set value to localStorage');
     cleanup();
     expect(localStorage.getItem('searchBarValue')).toBe('set value to localStorage');
