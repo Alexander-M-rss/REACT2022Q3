@@ -7,6 +7,7 @@ export const SEARCH_HEIGHT = `${SEARCH_BAR_HEIGHT} + 2 * ${MARGIN_TOP_BOTTOM}`;
 
 interface ISearchBarProps {
   placeholder: string;
+  searchHandler: (search: string) => void;
 }
 
 interface ISearchBarState {
@@ -24,7 +25,8 @@ class SearchBar extends React.Component<ISearchBarProps, ISearchBarState> {
     this.setState({ value: event.target.value });
   };
 
-  handleClearClick: React.MouseEventHandler<HTMLButtonElement> = () => {
+  handleClearClick: React.MouseEventHandler<HTMLButtonElement> = (event) => {
+    event.preventDefault();
     this.setState({ value: '' });
   };
 
@@ -32,14 +34,20 @@ class SearchBar extends React.Component<ISearchBarProps, ISearchBarState> {
     localStorage.setItem('searchBarValue', this.state.value);
   };
 
+  handleSearchSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
+    event.preventDefault();
+    this.props.searchHandler(this.state.value);
+  };
+
   render() {
     return (
-      <div
+      <form
         className="search-container"
         style={{ height: SEARCH_BAR_HEIGHT, margin: `${MARGIN_TOP_BOTTOM} auto` }}
         data-testid="search-bar"
+        onSubmit={this.handleSearchSubmit}
       >
-        <button className="button search-button"></button>
+        <button type="submit" className="button search-button"></button>
         <input
           className="search"
           type="text"
@@ -49,7 +57,7 @@ class SearchBar extends React.Component<ISearchBarProps, ISearchBarState> {
           onChange={this.handleChange}
         />
         <button className="button clear-button" onClick={this.handleClearClick}></button>
-      </div>
+      </form>
     );
   }
 }

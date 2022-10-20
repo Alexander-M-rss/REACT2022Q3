@@ -38,7 +38,7 @@ interface IGetItemsOptions {
 }
 
 export const getItems = async (
-  search = '',
+  search: string,
   opt: IGetItemsOptions = { page: 1, limit: DEFAULT_LIMIT }
 ): Promise<IItemsResp> => {
   const itemResp: IItemsResp = {

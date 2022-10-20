@@ -20,10 +20,10 @@ class Main extends React.Component<unknown, IMainPageState> {
   }
 
   componentDidMount = () => {
-    this.getItemsData();
+    this.getItemsData('');
   };
 
-  getItemsData = async (search = '') => {
+  getItemsData = async (search: string) => {
     const data = await getItems(search);
     this.setState({ itemsData: data.items, errMsg: data.errMsg });
   };
@@ -46,7 +46,7 @@ class Main extends React.Component<unknown, IMainPageState> {
     return (
       <>
         <Header title="Main Page" links={[links.forms, links.about]} />
-        <SearchBar placeholder="Search" />
+        <SearchBar placeholder="Search" searchHandler={this.getItemsData} />
         <ItemsCardsList
           items={this.state.itemsData}
           errMsg={this.state.errMsg}

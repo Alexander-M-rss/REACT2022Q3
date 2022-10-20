@@ -10,7 +10,7 @@ describe('getItems', () => {
       json: () => Promise.resolve({ docs: itemsData, pages: 1 }),
     } as Response);
 
-    const data = await getItems();
+    const data = await getItems('');
 
     expect(data).toStrictEqual({
       items: itemsData,
@@ -26,7 +26,7 @@ describe('getItems', () => {
       json: () => Promise.resolve({ docs: [], pages: 1 }),
     } as Response);
 
-    const data = await getItems();
+    const data = await getItems('');
 
     expect(data).toStrictEqual({
       items: [],
@@ -42,7 +42,7 @@ describe('getItems', () => {
       json: () => Promise.resolve(itemsData),
     } as Response);
 
-    const data = await getItems();
+    const data = await getItems('');
 
     expect(data.items).toEqual([]);
     expect(data.pages).toEqual(0);
