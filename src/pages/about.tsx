@@ -5,7 +5,7 @@ import AboutUs from '../components/aboutUs';
 function About() {
   return (
     <>
-      <Header title="About Us" links={[links.main]} />
+      <Header title="About Us" links={[links.main, links.forms]} />
       <AboutUs />
     </>
   );

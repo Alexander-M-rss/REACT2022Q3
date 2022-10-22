@@ -20,6 +20,14 @@ describe('Router', () => {
     );
     expect(screen.getByRole('heading', { name: 'About Us' })).toBeInTheDocument();
   });
+  it('renders About Us page on route "/forms"', () => {
+    render(
+      <MemoryRouter initialEntries={['/forms']}>
+        <RoutesComponent />
+      </MemoryRouter>
+    );
+    expect(screen.getByRole('heading', { name: 'Forms Page' })).toBeInTheDocument();
+  });
   it('renders 404 page on route "/404"', () => {
     render(
       <MemoryRouter initialEntries={['/404']}>
