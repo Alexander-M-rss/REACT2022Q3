@@ -1,32 +1,30 @@
 import React from 'react';
 import ItemCard from './itemCard';
-import { IItemData } from '../data/items';
+import { IItemData } from '../api/api';
 import './itemsCardsList.css';
 
 interface IItemsCardsListProps {
-  heightOffset: string;
-  baseImgUrl: string;
   items: IItemData[];
+  errMsg: string;
+  onClick: (event: React.MouseEvent) => void;
 }
 
-function ItemsCardsList({ heightOffset, baseImgUrl, items }: IItemsCardsListProps) {
+function ItemsCardsList({ items, errMsg, onClick }: IItemsCardsListProps) {
   return (
-    <section
-      className="items-cards-list"
-      style={{ height: `calc(100vh - (${heightOffset}))` }}
-      data-testid="items-cards-list"
-    >
-      {items.map((item) => {
+    <section className="items-cards-list" data-testid="items-cards-list">
+      {!items.length && (
+        <div className="items-cards-list__err-msg" data-testid="err-msg">
+          {errMsg}
+        </div>
+      )}
+      {items.map((item, idx) => {
         return (
           <ItemCard
-            key={item.id}
-            title={item.title}
-            imgUrl={baseImgUrl + item.poster_path}
-            overview={item.overview}
-            popularity={item.popularity.toString()}
-            vote_average={item.vote_average.toFixed(1)}
-            vote_count={item.vote_count.toString()}
-            release_date={item.release_date}
+            key={item._id}
+            itemIdx={idx.toString()}
+            item={item}
+            isFullInfo={false}
+            onClick={onClick}
           />
         );
       })}

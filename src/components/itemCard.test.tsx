@@ -1,30 +1,65 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import ItemCard from './itemCard';
-import itemsData, { BASE_IMG_URL } from '../data/items';
+import ItemCard, { valueNamesFullCard, valueNamesShortCard } from './itemCard';
+import { testItem } from 'data/items';
+import userEvent from '@testing-library/user-event';
+
+const onClickHendler = jest.fn();
 
 describe('ItemCard', () => {
-  it('renders component', () => {
-    const item = itemsData[0];
+  it('renders full component', () => {
+    render(
+      <ItemCard itemIdx={'indexValue'} item={testItem} isFullInfo={true} onClick={onClickHendler} />
+    );
+    expect(screen.getByText(new RegExp(testItem.name.toString()))).toBeInTheDocument();
+    valueNamesFullCard.forEach((valueName) =>
+      expect(screen.getByText(new RegExp(testItem[valueName].toString()))).toBeInTheDocument()
+    );
+    expect(screen.getByText(/More info/)).toBeInTheDocument();
+  });
+  it('renders short component', () => {
     render(
       <ItemCard
-        key={item.id}
-        title={item.title}
-        imgUrl={BASE_IMG_URL + item.poster_path}
-        overview={item.overview}
-        popularity={item.popularity.toString()}
-        vote_average={item.vote_average.toFixed(1)}
-        vote_count={item.vote_count.toString()}
-        release_date={item.release_date}
+        itemIdx={'indexValue'}
+        item={testItem}
+        isFullInfo={false}
+        onClick={onClickHendler}
       />
     );
-
-    expect(screen.getByText(item.title)).toBeInTheDocument();
-    expect(screen.getByRole('img')).toBeInTheDocument();
-    expect(screen.getByText(item.overview)).toBeInTheDocument();
-    expect(screen.getByText(item.popularity.toString())).toBeInTheDocument();
-    expect(screen.getAllByText(item.vote_average.toFixed(1)).length).toBe(2);
-    expect(screen.getByText(new RegExp(item.vote_count.toString(), 'i'))).toBeInTheDocument();
-    expect(screen.getByText(item.release_date)).toBeInTheDocument();
+    expect(screen.getByText(new RegExp(testItem.name.toString()))).toBeInTheDocument();
+    valueNamesShortCard.forEach((valueName) =>
+      expect(screen.getByText(new RegExp(testItem[valueName].toString()))).toBeInTheDocument()
+    );
+    valueNamesFullCard
+      .filter((x) => !valueNamesShortCard.includes(x))
+      .forEach((valueName) =>
+        expect(
+          screen.queryByText(new RegExp(testItem[valueName].toString()))
+        ).not.toBeInTheDocument()
+      );
+    expect(screen.queryByText(/More info/)).not.toBeInTheDocument();
+  });
+  it('checks short card onClick handler call count', () => {
+    render(
+      <ItemCard
+        itemIdx={'indexValue'}
+        item={testItem}
+        isFullInfo={false}
+        onClick={onClickHendler}
+      />
+    );
+    const name = screen.getByText(new RegExp(testItem.name.toString()));
+    userEvent.click(name);
+    userEvent.click(name);
+    expect(onClickHendler).toBeCalledTimes(2);
+  });
+  it('checks full card onClick handler call count', () => {
+    render(
+      <ItemCard itemIdx={'indexValue'} item={testItem} isFullInfo={true} onClick={onClickHendler} />
+    );
+    const name = screen.getByText(new RegExp(testItem.name.toString()));
+    userEvent.click(name);
+    userEvent.click(name);
+    expect(onClickHendler).toBeCalledTimes(2);
   });
 });

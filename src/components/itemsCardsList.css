@@ -4,6 +4,7 @@
   align-items: center;
   flex-wrap: wrap;
   overflow-y: auto;
+  flex-grow: 1;
 }
 
 .items-cards-list::-webkit-scrollbar {
@@ -42,4 +43,9 @@
   linear-gradient(60deg, #161b22 40%, rgba(0, 0, 0, 0) 41%),
   linear-gradient(180deg, #161b22 30%, rgba(0, 0, 0, 0) 31%);
   background-color: #c9d1d9;
+}
+
+.items-cards-list__err-msg {
+  font-size: 3rem;
+  font-weight: 700;
 }
