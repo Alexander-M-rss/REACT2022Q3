@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Header, { links } from '../components/header';
 import SearchBar from '../components/searchBar';
 import ItemsCardsList from '../components/itemsCardsList';
@@ -7,75 +7,56 @@ import Modal, { OVERLAY_ID, CLOSE_ID } from 'components/modal';
 import ItemCard from 'components/itemCard';
 import DownloadIndicator from 'components/downloadIndicator';
 
-interface IMainPageState {
-  itemsData: IItemData[];
-  isModalVisible: boolean;
-  itemModalIdx: number;
-  errMsg: string;
-  isDataLoading: boolean;
-}
+function Main() {
+  const [itemsData, setItemsData] = useState([] as IItemData[]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const itemModalIdx = useRef(0);
+  const errMsg = useRef('');
+  const [isDataLoading, setIsDataLoading] = useState(true);
 
-class Main extends React.Component<unknown, IMainPageState> {
-  constructor(props = {}) {
-    super(props);
-    this.state = {
-      itemsData: [],
-      isModalVisible: false,
-      itemModalIdx: 0,
-      errMsg: '',
-      isDataLoading: true,
-    };
-  }
-
-  componentDidMount = () => {
-    this.getItemsData('');
-  };
-
-  getItemsData = async (search: string) => {
-    this.setState({ itemsData: [], isDataLoading: true });
+  const getItemsData = async (search: string) => {
+    setItemsData([]);
+    setIsDataLoading(true);
     const data = await getItems(search);
-    this.setState({ itemsData: data.items, errMsg: data.errMsg, isDataLoading: false });
+    errMsg.current = data.errMsg;
+    setIsDataLoading(false);
+    setItemsData(data.items);
   };
 
-  showModal: React.MouseEventHandler = (e) => {
-    this.setState({ isModalVisible: true, itemModalIdx: parseInt(e.currentTarget.id) });
+  const showModal: React.MouseEventHandler = (e) => {
+    itemModalIdx.current = parseInt(e.currentTarget.id);
+    setIsModalVisible(true);
   };
 
-  closeModal: React.MouseEventHandler = (e) => {
+  const closeModal: React.MouseEventHandler = (e) => {
     const target = e.target as HTMLElement;
 
     if (!target || (target && target.id !== OVERLAY_ID && target.id !== CLOSE_ID)) {
       return;
     }
 
-    this.setState({ isModalVisible: false });
+    setIsModalVisible(false);
   };
 
-  render() {
-    return (
-      <>
-        <Header title="Main Page" links={[links.forms, links.about]} />
-        <SearchBar placeholder="Search" searchHandler={this.getItemsData} />
-        {this.state.isDataLoading && <DownloadIndicator />}
-        {!this.state.isDataLoading && (
-          <ItemsCardsList
-            items={this.state.itemsData}
-            errMsg={this.state.errMsg}
-            onClick={this.showModal}
-          />
-        )}
-        {this.state.isModalVisible && (
-          <Modal closeHandler={this.closeModal}>
-            <ItemCard
-              item={this.state.itemsData[this.state.itemModalIdx]}
-              isFullInfo={true}
-              onClick={() => {}}
-            />
-          </Modal>
-        )}
-      </>
-    );
-  }
+  useEffect(() => {
+    getItemsData('');
+  }, []);
+
+  return (
+    <>
+      <Header title="Main Page" links={[links.forms, links.about]} />
+      <SearchBar placeholder="Search" searchHandler={getItemsData} />
+      {isDataLoading && <DownloadIndicator />}
+      {!isDataLoading && (
+        <ItemsCardsList items={itemsData} errMsg={errMsg.current} onClick={showModal} />
+      )}
+      {isModalVisible && (
+        <Modal closeHandler={closeModal}>
+          <ItemCard item={itemsData[itemModalIdx.current]} isFullInfo={true} onClick={() => {}} />
+        </Modal>
+      )}
+    </>
+  );
 }
 
 export default Main;
