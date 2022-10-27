@@ -1,7 +1,8 @@
 import { IPersonCardProps } from './personCard';
 
-export interface IFormValues extends IPersonCardProps {
+export interface IFormValues extends Omit<IPersonCardProps, 'picture'> {
+  picture: FileList;
   consent: string;
 }
 
-export type NotValidInputs = { [k in keyof IFormValues]: boolean };
+export type ErrMsg = { [k in keyof IFormValues]: string };
