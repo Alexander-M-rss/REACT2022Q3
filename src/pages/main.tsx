@@ -1,27 +1,32 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import Header, { links } from '../components/header';
 import SearchBar from '../components/searchBar';
 import ItemsCardsList from '../components/itemsCardsList';
-import { getItems, IItemData } from '../api/api';
+import { getItems } from '../api/api';
 import Modal, { OVERLAY_ID, CLOSE_ID } from 'components/modal';
 import ItemCard from 'components/itemCard';
 import DownloadIndicator from 'components/downloadIndicator';
+import GlobalStateContext from 'state/context';
+import { ACTION } from 'state/reducer';
 
 function Main() {
-  const [itemsData, setItemsData] = useState([] as IItemData[]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const itemModalIdx = useRef(0);
-  const errMsg = useRef('');
-  const [isDataLoading, setIsDataLoading] = useState(true);
+  const [isDataLoading, setIsDataLoading] = useState(false);
+  const { globalState, dispatch } = useContext(GlobalStateContext);
 
-  const getItemsData = async (search: string) => {
-    setItemsData([]);
-    setIsDataLoading(true);
-    const data = await getItems(search);
-    errMsg.current = data.errMsg;
-    setIsDataLoading(false);
-    setItemsData(data.items);
-  };
+  const getItemsData = useCallback(
+    async (search: string) => {
+      setIsDataLoading(true);
+      const data = await getItems(search);
+      setIsDataLoading(false);
+      dispatch({
+        type: ACTION.saveItemsData,
+        payload: { itemsData: data.items, errMsg: data.errMsg },
+      });
+    },
+    [dispatch]
+  );
 
   const showModal: React.MouseEventHandler = (e) => {
     itemModalIdx.current = parseInt(e.currentTarget.id);
@@ -39,8 +44,10 @@ function Main() {
   };
 
   useEffect(() => {
-    getItemsData('');
-  }, []);
+    if (!globalState.itemsData || (!globalState.itemsData.length && !globalState.errMsg.length)) {
+      getItemsData('');
+    }
+  }, [getItemsData, globalState.itemsData, globalState.errMsg]);
 
   return (
     <>
@@ -48,11 +55,19 @@ function Main() {
       <SearchBar placeholder="Search" searchHandler={getItemsData} />
       {isDataLoading && <DownloadIndicator />}
       {!isDataLoading && (
-        <ItemsCardsList items={itemsData} errMsg={errMsg.current} onClick={showModal} />
+        <ItemsCardsList
+          items={globalState.itemsData || []}
+          errMsg={globalState.errMsg}
+          onClick={showModal}
+        />
       )}
-      {isModalVisible && (
+      {isModalVisible && globalState.itemsData && (
         <Modal closeHandler={closeModal}>
-          <ItemCard item={itemsData[itemModalIdx.current]} isFullInfo={true} onClick={() => {}} />
+          <ItemCard
+            item={globalState.itemsData[itemModalIdx.current]}
+            isFullInfo={true}
+            onClick={() => {}}
+          />
         </Modal>
       )}
     </>

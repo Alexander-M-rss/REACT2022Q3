@@ -1,24 +1,34 @@
 import React from 'react';
 import { IPersonCardProps } from '../components/personCard';
 import { IFormValues } from 'components/formTypes';
+import { IItemData } from 'api/api';
 
 export enum ACTION {
   addPersonCard = 'addPersonCard',
   saveFormValues = 'saveFormValues',
+  saveItemsData = 'saveItemsData',
+}
+
+interface IItemsPayload {
+  itemsData: IItemData[];
+  errMsg: string;
 }
 
 export interface IAction {
   type: ACTION;
-  payload?: IPersonCardProps | IFormValues;
+  payload?: IPersonCardProps | IFormValues | IItemsPayload;
 }
 
 export interface IGlobalState {
   personCards: IPersonCardProps[];
   formValues?: IFormValues;
+  itemsData?: IItemData[];
+  errMsg: string;
 }
 
 export const initialGlobalState: IGlobalState = {
   personCards: [],
+  errMsg: '',
 };
 
 const reducer: React.Reducer<IGlobalState, IAction> = (
@@ -37,6 +47,11 @@ const reducer: React.Reducer<IGlobalState, IAction> = (
       return {
         ...globalState,
         formValues: payload as IFormValues,
+      };
+    case ACTION.saveItemsData:
+      return {
+        ...globalState,
+        ...(payload as IItemsPayload),
       };
     default:
       return globalState;

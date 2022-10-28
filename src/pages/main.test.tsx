@@ -5,6 +5,7 @@ import Main from './main';
 import itemsData from 'data/items';
 import userEvent from '@testing-library/user-event';
 import { OVERLAY_ID } from 'components/modal';
+import { GlobalStatePovider } from 'state/context';
 
 let fakeFetch: jest.SpyInstance<
   Promise<Response>,
@@ -40,7 +41,9 @@ describe('Main page', () => {
   it('renders component', async () => {
     render(
       <BrowserRouter>
-        <Main />
+        <GlobalStatePovider>
+          <Main />
+        </GlobalStatePovider>
       </BrowserRouter>
     );
     expect(screen.getByTestId('header')).toBeInTheDocument();
@@ -60,7 +63,9 @@ describe('Main page', () => {
   it('submits search with results by Enter key pressing in SearchBar', async () => {
     render(
       <BrowserRouter>
-        <Main />
+        <GlobalStatePovider>
+          <Main />
+        </GlobalStatePovider>
       </BrowserRouter>
     );
     expect(await screen.findByTestId('items-cards-list')).toBeInTheDocument();
@@ -79,7 +84,9 @@ describe('Main page', () => {
   it('submits search without results by Search button click', async () => {
     render(
       <BrowserRouter>
-        <Main />
+        <GlobalStatePovider>
+          <Main />
+        </GlobalStatePovider>
       </BrowserRouter>
     );
     expect(await screen.findByTestId('items-cards-list')).toBeInTheDocument();
@@ -126,7 +133,9 @@ describe('Main page', () => {
 
     render(
       <BrowserRouter>
-        <Main />
+        <GlobalStatePovider>
+          <Main />
+        </GlobalStatePovider>
       </BrowserRouter>
     );
     expect(await screen.findByTestId('items-cards-list')).toBeInTheDocument();
@@ -137,7 +146,9 @@ describe('Main page', () => {
   it('shows modal window with full card and closes it', async () => {
     render(
       <BrowserRouter>
-        <Main />
+        <GlobalStatePovider>
+          <Main />
+        </GlobalStatePovider>
       </BrowserRouter>
     );
     expect(await screen.findByTestId('items-cards-list')).toBeInTheDocument();
