@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import './form.css';
 import { IFormValues, ErrMsg } from './formTypes';
 import LabledInput from './labledInput';
@@ -7,6 +7,8 @@ import LabledSelect from './labledSelect';
 import LabledSwitcher from './labledSwitcher';
 import { IPersonCardProps } from './personCard';
 import { useForm } from 'react-hook-form';
+import GlobalStateContext from 'state/context';
+import { ACTION } from 'state/reducer';
 
 interface IFormProps {
   addPersonCard: (personCard: IPersonCardProps) => void;
@@ -34,7 +36,28 @@ function Form({ addPersonCard }: IFormProps) {
     register,
     clearErrors,
     formState: { errors },
+    getValues,
+    setValue,
   } = useForm<IFormValues>({ reValidateMode: 'onSubmit' });
+  const { globalState, dispatch } = useContext(GlobalStateContext);
+
+  useEffect(() => {
+    return () => {
+      if (!isFirstFilling || !isSubmitDisabled) {
+        dispatch({ type: ACTION.saveFormValues, payload: getValues() });
+      }
+    };
+  }, [dispatch, getValues, isFirstFilling, isSubmitDisabled]);
+
+  useEffect(() => {
+    if (globalState.formValues) {
+      for (const [key, value] of Object.entries(globalState.formValues)) {
+        setValue(key as keyof IFormValues, value);
+      }
+      setIsFirstFilling(false);
+      setIsSubmitDisabled(false);
+    }
+  }, [globalState.formValues, setValue]);
 
   const submitHandler = (data: IFormValues) => {
     const { name, surname, birthday, country, gender } = data;
