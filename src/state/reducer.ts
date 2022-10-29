@@ -1,7 +1,7 @@
 import React from 'react';
 import { IPersonCardProps } from '../components/personCard';
 import { IFormValues } from 'components/formTypes';
-import { IItemData } from 'api/api';
+import { IItemData, SORTING } from 'api/api';
 
 export enum ACTION {
   addPersonCard = 'addPersonCard',
@@ -12,6 +12,9 @@ export enum ACTION {
 interface IItemsPayload {
   itemsData: IItemData[];
   errMsg: string;
+  pages: number;
+  search?: string;
+  sorting?: SORTING;
 }
 
 export interface IAction {
@@ -24,11 +27,21 @@ export interface IGlobalState {
   formValues?: IFormValues;
   itemsData?: IItemData[];
   errMsg: string;
+  search: string;
+  pages: number;
+  sorting: SORTING;
+  itemsPerPage: number;
+  page: number;
 }
 
 export const initialGlobalState: IGlobalState = {
   personCards: [],
   errMsg: '',
+  search: '',
+  pages: 1,
+  sorting: SORTING.nameAsc,
+  itemsPerPage: 10,
+  page: 1,
 };
 
 const reducer: React.Reducer<IGlobalState, IAction> = (

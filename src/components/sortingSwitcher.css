@@ -1,0 +1,16 @@
+.sorting-switcher {
+  margin: 10px;
+  width:  190px;
+  display: flex;
+  align-items: center;
+}
+
+.sorting-switcher__select {
+  margin: 10px;
+  width:  150px;
+  color: #0d1117;
+  background-color: #c9d1d9;
+  border: none;
+  border-radius: 5px;
+  outline-color: #c9d1d9;
+}

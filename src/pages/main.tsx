@@ -2,12 +2,13 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from 'rea
 import Header, { links } from '../components/header';
 import SearchBar from '../components/searchBar';
 import ItemsCardsList from '../components/itemsCardsList';
-import { getItems } from '../api/api';
+import { getItems, IGetItemsOptions } from '../api/api';
 import Modal, { OVERLAY_ID, CLOSE_ID } from 'components/modal';
 import ItemCard from 'components/itemCard';
 import DownloadIndicator from 'components/downloadIndicator';
 import GlobalStateContext from 'state/context';
 import { ACTION } from 'state/reducer';
+import SortingSwitcher from 'components/sortingSwitcher';
 
 function Main() {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -16,13 +17,19 @@ function Main() {
   const { globalState, dispatch } = useContext(GlobalStateContext);
 
   const getItemsData = useCallback(
-    async (search: string) => {
+    async (opt: IGetItemsOptions) => {
       setIsDataLoading(true);
-      const data = await getItems(search);
+      const data = await getItems(opt);
       setIsDataLoading(false);
       dispatch({
         type: ACTION.saveItemsData,
-        payload: { itemsData: data.items, errMsg: data.errMsg },
+        payload: {
+          itemsData: data.items,
+          errMsg: data.errMsg,
+          pages: data.pages,
+          search: opt.search,
+          sorting: opt.sorting,
+        },
       });
     },
     [dispatch]
@@ -45,14 +52,30 @@ function Main() {
 
   useEffect(() => {
     if (!globalState.itemsData || (!globalState.itemsData.length && !globalState.errMsg.length)) {
-      getItemsData('');
+      getItemsData({
+        search: '',
+        sorting: globalState.sorting,
+        page: globalState.page,
+        limit: globalState.itemsPerPage,
+      });
     }
-  }, [getItemsData, globalState.itemsData, globalState.errMsg]);
+  }, [getItemsData, globalState]);
 
   return (
     <>
       <Header title="Main Page" links={[links.forms, links.about]} />
-      <SearchBar placeholder="Search" searchHandler={getItemsData} />
+      <div
+        style={{
+          display: 'flex',
+          justifyItems: 'center',
+          justifyContent: 'space-evenly',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+        }}
+      >
+        <SearchBar placeholder="Search" searchHandler={getItemsData} />
+        <SortingSwitcher searchHandler={getItemsData} />
+      </div>
       {isDataLoading && <DownloadIndicator />}
       {!isDataLoading && (
         <ItemsCardsList
