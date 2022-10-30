@@ -9,6 +9,7 @@ import DownloadIndicator from 'components/downloadIndicator';
 import GlobalStateContext from 'state/context';
 import { ACTION } from 'state/reducer';
 import SortingSwitcher from 'components/sortingSwitcher';
+import PaginationSwitcher from 'components/paginationSwitcher';
 
 function Main() {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -29,6 +30,7 @@ function Main() {
           pages: data.pages,
           search: opt.search,
           sorting: opt.sorting,
+          page: opt.page,
         },
       });
     },
@@ -75,6 +77,7 @@ function Main() {
       >
         <SearchBar placeholder="Search" searchHandler={getItemsData} />
         <SortingSwitcher searchHandler={getItemsData} />
+        <PaginationSwitcher searchHandler={getItemsData} />
       </div>
       {isDataLoading && <DownloadIndicator />}
       {!isDataLoading && (

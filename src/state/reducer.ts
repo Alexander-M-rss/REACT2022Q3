@@ -15,6 +15,7 @@ interface IItemsPayload {
   pages: number;
   search?: string;
   sorting?: SORTING;
+  page?: number;
 }
 
 export interface IAction {

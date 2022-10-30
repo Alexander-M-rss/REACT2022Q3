@@ -69,12 +69,22 @@ describe('SearchBar', () => {
     userEvent.type(screen.getByRole('textbox'), '{selectall}test search');
     userEvent.click(screen.getAllByRole('button')[0]);
     expect(handleSearch).toBeCalledTimes(1);
-    expect(handleSearch).toBeCalledWith('test search');
+    expect(handleSearch).toBeCalledWith({
+      limit: 10,
+      page: 1,
+      search: 'test search',
+      sorting: 'name:asc',
+    });
   });
   it('submits search by input Enter in textbox', () => {
     render(<SearchBar placeholder="Search test" searchHandler={handleSearch} />);
     userEvent.type(screen.getByRole('textbox'), '{selectall}test search{Enter}');
     expect(handleSearch).toBeCalledTimes(1);
-    expect(handleSearch).toBeCalledWith('test search');
+    expect(handleSearch).toBeCalledWith({
+      limit: 10,
+      page: 1,
+      search: 'test search',
+      sorting: 'name:asc',
+    });
   });
 });

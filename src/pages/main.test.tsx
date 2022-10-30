@@ -49,13 +49,15 @@ describe('Main page', () => {
     expect(screen.getByTestId('header')).toBeInTheDocument();
     expect(screen.queryAllByRole('link').length).toBeGreaterThan(0);
     expect(screen.getByTestId('search-bar')).toBeInTheDocument();
+    expect(screen.getByTestId('sort')).toBeInTheDocument();
+    expect(screen.getByTestId('pagination')).toBeInTheDocument();
     expect(screen.getByAltText('Loading...')).toBeInTheDocument();
     expect(await screen.findByTestId('items-cards-list')).toBeInTheDocument();
     expect(screen.queryByAltText('Loading...')).not.toBeInTheDocument();
     expect(screen.getAllByTestId('item-card').length).toBe(itemsData.length);
     expect(screen.queryByTestId('err-msg')).not.toBeInTheDocument();
     expect(fakeFetch).lastCalledWith(
-      'https://the-one-api.dev/v2/character/?page=1&limit=10&name=//i',
+      'https://the-one-api.dev/v2/character/?page=1&limit=10&sort=name:asc&name=//i',
       options
     );
   });
@@ -76,7 +78,7 @@ describe('Main page', () => {
     expect(screen.getAllByTestId('item-card').length).toBe(itemsData.length);
     expect(screen.queryByTestId('err-msg')).not.toBeInTheDocument();
     expect(fakeFetch).toBeCalledWith(
-      'https://the-one-api.dev/v2/character/?page=1&limit=10&name=/Search with result/i',
+      'https://the-one-api.dev/v2/character/?page=1&limit=10&sort=name:asc&name=/Search with result/i',
       options
     );
   });
@@ -112,7 +114,7 @@ describe('Main page', () => {
     expect(screen.queryAllByTestId('item-card').length).toBe(0);
     expect(screen.queryByText('Nothing has been found')).toBeInTheDocument();
     expect(fakeFetch.mock.calls[1]).toEqual([
-      'https://the-one-api.dev/v2/character/?page=1&limit=10&name=/Search without result/i',
+      'https://the-one-api.dev/v2/character/?page=1&limit=10&sort=name:asc&name=/Search without result/i',
       options,
     ]);
   });

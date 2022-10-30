@@ -50,7 +50,7 @@ export interface IGetItemsOptions {
 export const getItems = async (opt: IGetItemsOptions): Promise<IItemsResp> => {
   const itemResp: IItemsResp = {
     items: [],
-    pages: 0,
+    pages: 1,
     errMsg: '',
   };
 
