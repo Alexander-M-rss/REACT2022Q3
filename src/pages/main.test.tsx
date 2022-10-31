@@ -26,7 +26,7 @@ beforeEach(
           ok: true,
           status: 200,
           statusText: 'OK',
-          json: () => Promise.resolve({ docs: itemsData, pages: 1 }),
+          json: () => Promise.resolve({ docs: itemsData, pages: 10 }),
         } as Response);
       });
     }))
@@ -55,6 +55,8 @@ describe('Main page', () => {
     expect(screen.queryByAltText('Loading...')).not.toBeInTheDocument();
     expect(screen.getAllByTestId('item-card').length).toBe(itemsData.length);
     expect(screen.queryByTestId('err-msg')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('sort')).toBeInTheDocument();
+    expect(screen.queryByTestId('pagination')).toBeInTheDocument();
     expect(fakeFetch).lastCalledWith(
       'https://the-one-api.dev/v2/character/?page=1&limit=10&sort=name:asc&name=//i',
       options
@@ -142,5 +144,74 @@ describe('Main page', () => {
     expect(await screen.findByTestId('items-cards-list')).toBeInTheDocument();
     expect(screen.queryAllByTestId('item-card').length).toBe(0);
     expect(screen.queryByTestId('err-msg')).toBeInTheDocument();
+  });
+
+  it('tests next, last, previous and first pages switching', async () => {
+    render(
+      <BrowserRouter>
+        <GlobalStatePovider>
+          <Main />
+        </GlobalStatePovider>
+      </BrowserRouter>
+    );
+    expect(await screen.findByTestId('items-cards-list')).toBeInTheDocument();
+    userEvent.click(screen.getByRole('button', { name: '>' }));
+    expect(fakeFetch.mock.calls[1]).toEqual([
+      'https://the-one-api.dev/v2/character/?page=2&limit=10&sort=name:asc&name=//i',
+      options,
+    ]);
+    expect(await screen.findByTestId('items-cards-list')).toBeInTheDocument();
+    userEvent.click(screen.getByRole('button', { name: '>>' }));
+    expect(fakeFetch.mock.calls[2]).toEqual([
+      'https://the-one-api.dev/v2/character/?page=10&limit=10&sort=name:asc&name=//i',
+      options,
+    ]);
+    expect(await screen.findByTestId('items-cards-list')).toBeInTheDocument();
+    userEvent.click(screen.getByRole('button', { name: '<' }));
+    expect(fakeFetch.mock.calls[3]).toEqual([
+      'https://the-one-api.dev/v2/character/?page=9&limit=10&sort=name:asc&name=//i',
+      options,
+    ]);
+    expect(await screen.findByTestId('items-cards-list')).toBeInTheDocument();
+    userEvent.click(screen.getByRole('button', { name: '<<' }));
+    expect(fakeFetch.mock.calls[4]).toEqual([
+      'https://the-one-api.dev/v2/character/?page=1&limit=10&sort=name:asc&name=//i',
+      options,
+    ]);
+  });
+
+  it('tests number of items per page switching', async () => {
+    render(
+      <BrowserRouter>
+        <GlobalStatePovider>
+          <Main />
+        </GlobalStatePovider>
+      </BrowserRouter>
+    );
+    expect(await screen.findByTestId('items-cards-list')).toBeInTheDocument();
+    userEvent.selectOptions(screen.getByTestId('per-page'), '20');
+    expect(fakeFetch.mock.calls[1]).toEqual([
+      'https://the-one-api.dev/v2/character/?page=1&limit=20&sort=name:asc&name=//i',
+      options,
+    ]);
+  });
+
+  it('tests sorting mode switching', async () => {
+    render(
+      <BrowserRouter>
+        <GlobalStatePovider>
+          <Main />
+        </GlobalStatePovider>
+      </BrowserRouter>
+    );
+    expect(await screen.findByTestId('items-cards-list')).toBeInTheDocument();
+    userEvent.selectOptions(
+      screen.getByTestId('sort'),
+      screen.getByRole('option', { name: 'Name Descending' })
+    );
+    expect(fakeFetch.mock.calls[1]).toEqual([
+      'https://the-one-api.dev/v2/character/?page=1&limit=10&sort=name:desc&name=//i',
+      options,
+    ]);
   });
 });
