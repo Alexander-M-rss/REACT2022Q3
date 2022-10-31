@@ -4,7 +4,6 @@ import { BrowserRouter } from 'react-router-dom';
 import Main from './main';
 import itemsData from 'data/items';
 import userEvent from '@testing-library/user-event';
-import { OVERLAY_ID } from 'components/modal';
 import { GlobalStatePovider } from 'state/context';
 
 let fakeFetch: jest.SpyInstance<
@@ -143,29 +142,5 @@ describe('Main page', () => {
     expect(await screen.findByTestId('items-cards-list')).toBeInTheDocument();
     expect(screen.queryAllByTestId('item-card').length).toBe(0);
     expect(screen.queryByTestId('err-msg')).toBeInTheDocument();
-  });
-
-  it('shows modal window with full card and closes it', async () => {
-    render(
-      <BrowserRouter>
-        <GlobalStatePovider>
-          <Main />
-        </GlobalStatePovider>
-      </BrowserRouter>
-    );
-    expect(await screen.findByTestId('items-cards-list')).toBeInTheDocument();
-    let cards = screen.getAllByTestId('item-card');
-    expect(cards.length).toEqual(itemsData.length);
-    expect(screen.queryByTestId(OVERLAY_ID)).not.toBeInTheDocument();
-    userEvent.click(cards[0]);
-    const modal = screen.getByTestId(OVERLAY_ID);
-    expect(modal).toBeInTheDocument();
-    cards = screen.getAllByTestId('item-card');
-    expect(cards.length).toEqual(itemsData.length + 1);
-    expect(screen.queryByText(/more info/i)).toBeInTheDocument();
-    userEvent.click(cards[cards.length - 1]);
-    expect(modal).toBeInTheDocument();
-    userEvent.click(modal);
-    expect(screen.queryByTestId(OVERLAY_ID)).not.toBeInTheDocument();
   });
 });

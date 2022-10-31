@@ -7,6 +7,8 @@ export enum ACTION {
   addPersonCard = 'addPersonCard',
   saveFormValues = 'saveFormValues',
   saveItemsData = 'saveItemsData',
+  setDetailsIdx = 'setDetailsIdx',
+  resetDetailsIdx = 'resetDetailsIdx',
 }
 
 interface IItemsPayload {
@@ -21,7 +23,7 @@ interface IItemsPayload {
 
 export interface IAction {
   type: ACTION;
-  payload?: IPersonCardProps | IFormValues | IItemsPayload;
+  payload?: IPersonCardProps | IFormValues | IItemsPayload | number;
 }
 
 export interface IGlobalState {
@@ -34,6 +36,7 @@ export interface IGlobalState {
   sorting: SORTING;
   itemsPerPage: number;
   page: number;
+  detailsIdx: number;
 }
 
 export const initialGlobalState: IGlobalState = {
@@ -44,6 +47,7 @@ export const initialGlobalState: IGlobalState = {
   sorting: SORTING.nameAsc,
   itemsPerPage: DEFAULT_PER_PAGE,
   page: 1,
+  detailsIdx: -1,
 };
 
 const reducer: React.Reducer<IGlobalState, IAction> = (
@@ -67,6 +71,16 @@ const reducer: React.Reducer<IGlobalState, IAction> = (
       return {
         ...globalState,
         ...(payload as IItemsPayload),
+      };
+    case ACTION.setDetailsIdx:
+      return {
+        ...globalState,
+        detailsIdx: payload as number,
+      };
+    case ACTION.resetDetailsIdx:
+      return {
+        ...globalState,
+        detailsIdx: -1,
       };
     default:
       return globalState;

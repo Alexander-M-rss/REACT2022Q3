@@ -3,6 +3,7 @@ import { Route, Routes, Navigate } from 'react-router-dom';
 import Main from '../pages/main';
 import Forms from '../pages/forms';
 import About from '../pages/about';
+import Details from 'pages/details';
 import NotFound from '../pages/404';
 
 function RoutesComponent() {
@@ -11,6 +12,7 @@ function RoutesComponent() {
       <Route path="/" element={<Main />} />
       <Route path="/forms" element={<Forms />} />
       <Route path="/about" element={<About />} />
+      <Route path="/details" element={<Details />} />
       <Route path="/404" element={<NotFound />} />
       <Route path="*" element={<Navigate to="/404" replace />} />
     </Routes>

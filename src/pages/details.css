@@ -1,0 +1,31 @@
+.details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.details__back-btn {
+  margin: 10px;
+  border: 1px solid #30363d;
+  border-radius: 5px;
+  color: #c9d1d9;
+  background-color: #161b22;;
+  transition: 0.3s;
+}
+
+.details__back-btn:hover {
+  border-color: #8a939c;
+  background-color: #0d1117;
+  cursor: pointer;
+}
+
+/* .details .item-card {
+  cursor: auto;
+  box-shadow: 1px 1px 8px 5px rgba(0, 0, 0, .2);
+} */
+
+.details .item-card:hover {
+  cursor: auto;
+  box-shadow: 1px 1px 8px 5px rgba(0, 0, 0, .2);
+}
