@@ -2,6 +2,7 @@ const BASE_URL = 'https://the-one-api.dev/v2';
 const ITEMS_ENDPOINT = '/character';
 const ITEMS_URL = BASE_URL + ITEMS_ENDPOINT;
 const TOKEN = 'qUlM6gAOQnY1o9NArsHP';
+export const DEFAULT_PER_PAGE = 10;
 
 export enum SORTING {
   nameAsc = 'name:asc',

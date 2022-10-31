@@ -31,6 +31,7 @@ function Main() {
           search: opt.search,
           sorting: opt.sorting,
           page: opt.page,
+          itemsPerPage: opt.limit,
         },
       });
     },

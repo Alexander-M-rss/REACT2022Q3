@@ -45,7 +45,7 @@ describe('getItems', () => {
     const data = await getItems({ search: '', sorting: SORTING.nameAsc, page: 1, limit: 10 });
 
     expect(data.items).toEqual([]);
-    expect(data.pages).toEqual(0);
+    expect(data.pages).toEqual(1);
     expect(data.errMsg.length).toBeGreaterThan(0);
   });
 });

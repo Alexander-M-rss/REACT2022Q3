@@ -1,7 +1,7 @@
 import React from 'react';
 import { IPersonCardProps } from '../components/personCard';
 import { IFormValues } from 'components/formTypes';
-import { IItemData, SORTING } from 'api/api';
+import { IItemData, SORTING, DEFAULT_PER_PAGE } from 'api/api';
 
 export enum ACTION {
   addPersonCard = 'addPersonCard',
@@ -16,6 +16,7 @@ interface IItemsPayload {
   search?: string;
   sorting?: SORTING;
   page?: number;
+  itemsPerPage?: number;
 }
 
 export interface IAction {
@@ -41,7 +42,7 @@ export const initialGlobalState: IGlobalState = {
   search: '',
   pages: 1,
   sorting: SORTING.nameAsc,
-  itemsPerPage: 10,
+  itemsPerPage: DEFAULT_PER_PAGE,
   page: 1,
 };
 

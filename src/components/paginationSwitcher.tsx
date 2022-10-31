@@ -1,7 +1,11 @@
 import React, { useContext } from 'react';
-import { IGetItemsOptions } from 'api/api';
+import { IGetItemsOptions, DEFAULT_PER_PAGE } from 'api/api';
 import GlobalStateContext from 'state/context';
 import './paginationSwitcher.css';
+
+const PER_PAGE_DELTA = 5;
+const PER_PAGE_MULT = 5;
+const perPageOpt = Array(PER_PAGE_MULT).fill(0);
 
 interface IPaginationSwitcherProps {
   searchHandler: (opt: IGetItemsOptions) => void;
@@ -44,6 +48,15 @@ const PaginationSwitcher = ({ searchHandler }: IPaginationSwitcherProps) => {
     }
   };
 
+  const handleChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
+    searchHandler({
+      search: globalState.search,
+      sorting: globalState.sorting,
+      page: 1,
+      limit: +event.target.value,
+    });
+  };
+
   return (
     <div className="pagination-switcher" data-testid="pagination">
       <span>Page:</span>
@@ -74,21 +87,23 @@ const PaginationSwitcher = ({ searchHandler }: IPaginationSwitcherProps) => {
           {'>>'}
         </button>
       </div>
-
-      {/* <select
-        className="sorting-switcher__select"
-        value={globalState.sorting}
+      <span> per page:</span>
+      <select
+        className="pagination-switcher__select"
+        value={globalState.itemsPerPage}
         onChange={handleChange}
-        data-testid="sort"
+        disabled={!!globalState.errMsg.length}
+        data-testid="per-page"
       >
-        {sortingOptions.map((option) => {
+        {perPageOpt.map((_, i) => {
+          const value = DEFAULT_PER_PAGE + PER_PAGE_DELTA * i;
           return (
-            <option value={option.value} key={option.value}>
-              {option.text}
+            <option value={value} key={value}>
+              {value}
             </option>
           );
         })}
-      </select> */}
+      </select>
     </div>
   );
 };
