@@ -44,4 +44,13 @@ describe('Router', () => {
     );
     expect(screen.getByRole('heading', { name: 'Not Found' })).toBeInTheDocument();
   });
+
+  it('renders Details page on route "/details" which redirects to Main page', () => {
+    render(
+      <MemoryRouter initialEntries={['/details']}>
+        <RoutesComponent />
+      </MemoryRouter>
+    );
+    expect(screen.getByRole('heading', { name: 'Main Page' })).toBeInTheDocument();
+  });
 });

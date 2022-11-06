@@ -1,5 +1,5 @@
 import itemsData from 'data/items';
-import { getItems } from './api';
+import { getItems, SORTING } from './api';
 
 describe('getItems', () => {
   it('gets valid data', async () => {
@@ -10,7 +10,7 @@ describe('getItems', () => {
       json: () => Promise.resolve({ docs: itemsData, pages: 1 }),
     } as Response);
 
-    const data = await getItems('');
+    const data = await getItems({ search: '', sorting: SORTING.nameAsc, page: 1, limit: 10 });
 
     expect(data).toStrictEqual({
       items: itemsData,
@@ -26,7 +26,7 @@ describe('getItems', () => {
       json: () => Promise.resolve({ docs: [], pages: 1 }),
     } as Response);
 
-    const data = await getItems('');
+    const data = await getItems({ search: '', sorting: SORTING.nameAsc, page: 1, limit: 10 });
 
     expect(data).toStrictEqual({
       items: [],
@@ -42,10 +42,10 @@ describe('getItems', () => {
       json: () => Promise.resolve(itemsData),
     } as Response);
 
-    const data = await getItems('');
+    const data = await getItems({ search: '', sorting: SORTING.nameAsc, page: 1, limit: 10 });
 
     expect(data.items).toEqual([]);
-    expect(data.pages).toEqual(0);
+    expect(data.pages).toEqual(1);
     expect(data.errMsg.length).toBeGreaterThan(0);
   });
 });

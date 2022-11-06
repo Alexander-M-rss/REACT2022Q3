@@ -2,7 +2,16 @@ const BASE_URL = 'https://the-one-api.dev/v2';
 const ITEMS_ENDPOINT = '/character';
 const ITEMS_URL = BASE_URL + ITEMS_ENDPOINT;
 const TOKEN = 'qUlM6gAOQnY1o9NArsHP';
-const DEFAULT_LIMIT = 10;
+export const DEFAULT_PER_PAGE = 10;
+
+export enum SORTING {
+  nameAsc = 'name:asc',
+  nameDesc = 'name:desc',
+  raceAsc = 'race:asc',
+  raceDesc = 'race:desc',
+  heightAsc = 'height:asc',
+  heightDesc = 'height:desc',
+}
 
 export interface IItemData {
   _id: string;
@@ -32,24 +41,23 @@ interface IItemsResp {
   errMsg: string;
 }
 
-interface IGetItemsOptions {
-  page?: number;
-  limit?: number;
+export interface IGetItemsOptions {
+  search: string;
+  page: number;
+  limit: number;
+  sorting: SORTING;
 }
 
-export const getItems = async (
-  search: string,
-  opt: IGetItemsOptions = { page: 1, limit: DEFAULT_LIMIT }
-): Promise<IItemsResp> => {
+export const getItems = async (opt: IGetItemsOptions): Promise<IItemsResp> => {
   const itemResp: IItemsResp = {
     items: [],
-    pages: 0,
+    pages: 1,
     errMsg: '',
   };
 
   try {
     const resp = await fetch(
-      `${ITEMS_URL}/?page=${opt.page}&limit=${opt.limit}&name=/${search}/i`,
+      `${ITEMS_URL}/?page=${opt.page}&limit=${opt.limit}&sort=${opt.sorting}&name=/${opt.search}/i`,
       {
         method: 'GET',
         headers: {

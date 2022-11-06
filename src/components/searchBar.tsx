@@ -1,16 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import { IGetItemsOptions } from 'api/api';
+import React, { useContext, useEffect, useState } from 'react';
+import GlobalStateContext from 'state/context';
 import './searchBar.css';
 
 const SEARCH_BAR_HEIGHT = '36px';
-const MARGIN_TOP_BOTTOM = '10px';
+const MARGIN = '10px';
 
 interface ISearchBarProps {
   placeholder: string;
-  searchHandler: (search: string) => void;
+  searchHandler: (opt: IGetItemsOptions) => void;
 }
 
 function SearchBar({ placeholder, searchHandler }: ISearchBarProps) {
   const [value, setValue] = useState('');
+  const { globalState } = useContext(GlobalStateContext);
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
     setValue(event.target.value);
@@ -23,7 +26,12 @@ function SearchBar({ placeholder, searchHandler }: ISearchBarProps) {
 
   const handleSearchSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
-    searchHandler(value);
+    searchHandler({
+      search: value,
+      sorting: globalState.sorting,
+      page: 1,
+      limit: globalState.itemsPerPage,
+    });
   };
 
   useEffect(() => {
@@ -36,7 +44,7 @@ function SearchBar({ placeholder, searchHandler }: ISearchBarProps) {
   return (
     <form
       className="search-container"
-      style={{ height: SEARCH_BAR_HEIGHT, margin: `${MARGIN_TOP_BOTTOM} auto` }}
+      style={{ height: SEARCH_BAR_HEIGHT, margin: `${MARGIN}` }}
       data-testid="search-bar"
       onSubmit={handleSearchSubmit}
     >
