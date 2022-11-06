@@ -1,18 +1,19 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Header, { links } from '../components/header';
 import SearchBar from '../components/searchBar';
 import ItemsCardsList from '../components/itemsCardsList';
 import { getItems, IGetItemsOptions } from '../api/api';
 import DownloadIndicator from 'components/downloadIndicator';
-import GlobalStateContext from 'state/context';
-import { ACTION } from 'state/reducer';
 import SortingSwitcher from 'components/sortingSwitcher';
 import PaginationSwitcher from 'components/paginationSwitcher';
 import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { saveItemsData, setDetailsIdx } from 'store/stateSlice';
 
 function Main() {
   const [isDataLoading, setIsDataLoading] = useState(false);
-  const { globalState, dispatch } = useContext(GlobalStateContext);
+  const dispatch = useAppDispatch();
+  const state = useAppSelector((store) => store.state);
   const navigate = useNavigate();
 
   const getItemsData = useCallback(
@@ -20,9 +21,8 @@ function Main() {
       setIsDataLoading(true);
       const data = await getItems(opt);
       setIsDataLoading(false);
-      dispatch({
-        type: ACTION.saveItemsData,
-        payload: {
+      dispatch(
+        saveItemsData({
           itemsData: data.items,
           errMsg: data.errMsg,
           pages: data.pages,
@@ -30,27 +30,27 @@ function Main() {
           sorting: opt.sorting,
           page: opt.page,
           itemsPerPage: opt.limit,
-        },
-      });
+        })
+      );
     },
     [dispatch]
   );
 
   const showDetails: React.MouseEventHandler = (e) => {
-    dispatch({ type: ACTION.setDetailsIdx, payload: parseInt(e.currentTarget.id) });
+    dispatch(setDetailsIdx(parseInt(e.currentTarget.id)));
     navigate('/details');
   };
 
   useEffect(() => {
-    if (!globalState.itemsData || (!globalState.itemsData.length && !globalState.errMsg.length)) {
+    if (!state.itemsData || (!state.itemsData.length && !state.errMsg.length)) {
       getItemsData({
         search: '',
-        sorting: globalState.sorting,
-        page: globalState.page,
-        limit: globalState.itemsPerPage,
+        sorting: state.sorting,
+        page: state.page,
+        limit: state.itemsPerPage,
       });
     }
-  }, [getItemsData, globalState]);
+  }, [getItemsData, state]);
 
   return (
     <>
@@ -70,11 +70,7 @@ function Main() {
       </div>
       {isDataLoading && <DownloadIndicator />}
       {!isDataLoading && (
-        <ItemsCardsList
-          items={globalState.itemsData || []}
-          errMsg={globalState.errMsg}
-          onClick={showDetails}
-        />
+        <ItemsCardsList items={state.itemsData || []} errMsg={state.errMsg} onClick={showDetails} />
       )}
     </>
   );

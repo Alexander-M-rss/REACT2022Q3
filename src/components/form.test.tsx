@@ -3,17 +3,28 @@ import { render, cleanup, fireEvent, waitFor, screen } from '@testing-library/re
 import Form from './form';
 import { IPersonCardProps } from './personCard';
 import userEvent from '@testing-library/user-event';
+import { Provider } from 'react-redux';
+import store from 'store/store';
+import { resetState } from 'store/stateSlice';
+import { act } from 'react-dom/test-utils';
 
 let outputData: IPersonCardProps;
 
 const addPersonCard = (data: IPersonCardProps) => {
   Object.assign(outputData, data);
-  console.log('>', data);
 };
+
+afterEach(() => {
+  store.dispatch(resetState());
+});
 
 describe('Form', () => {
   it('renders component', () => {
-    render(<Form addPersonCard={addPersonCard} />);
+    render(
+      <Provider store={store}>
+        <Form addPersonCard={addPersonCard} />
+      </Provider>
+    );
     expect(screen.getAllByRole('textbox').length).toBe(2);
     expect(screen.getByText(/Name/)).toBeInTheDocument();
     expect(screen.getByText(/Surname/)).toBeInTheDocument();
@@ -30,15 +41,25 @@ describe('Form', () => {
   });
 
   it('checks name input', () => {
-    render(<Form addPersonCard={addPersonCard} />);
+    render(
+      <Provider store={store}>
+        <Form addPersonCard={addPersonCard} />
+      </Provider>
+    );
     expect(screen.getByRole('button')).toBeDisabled();
-    userEvent.type(screen.getByLabelText(/Name/), 'namevalue');
+    act(() => {
+      userEvent.type(screen.getByLabelText(/Name/), 'namevalue');
+    });
     expect(screen.getByDisplayValue('namevalue')).toBeInTheDocument;
     expect(screen.getByRole('button')).not.toBeDisabled();
   });
 
   it('checks surname input', () => {
-    render(<Form addPersonCard={addPersonCard} />);
+    render(
+      <Provider store={store}>
+        <Form addPersonCard={addPersonCard} />
+      </Provider>
+    );
     expect(screen.getByRole('button')).toBeDisabled();
     userEvent.type(screen.getByLabelText(/Surname/), 'surnamevalue');
     expect(screen.getByDisplayValue('surnamevalue')).toBeInTheDocument;
@@ -46,52 +67,93 @@ describe('Form', () => {
   });
 
   it('checks gender selection', () => {
-    render(<Form addPersonCard={addPersonCard} />);
+    render(
+      <Provider store={store}>
+        <Form addPersonCard={addPersonCard} />
+      </Provider>
+    );
     expect(screen.getByRole('button')).toBeDisabled();
-    userEvent.click(screen.getByLabelText('male'));
+    act(() => {
+      userEvent.click(screen.getByLabelText('male'));
+    });
     expect(screen.getByLabelText('male')).toBeChecked();
     expect(screen.getByRole('button')).not.toBeDisabled();
     cleanup();
-    render(<Form addPersonCard={addPersonCard} />);
+    store.dispatch(resetState());
+    render(
+      <Provider store={store}>
+        <Form addPersonCard={addPersonCard} />
+      </Provider>
+    );
     expect(screen.getByRole('button')).toBeDisabled();
-    userEvent.click(screen.getByLabelText('female'));
+    act(() => {
+      userEvent.click(screen.getByLabelText('female'));
+    });
     expect(screen.getByLabelText('female')).toBeChecked();
     expect(screen.getByRole('button')).not.toBeDisabled();
   });
 
   it('checks country selection', () => {
-    render(<Form addPersonCard={addPersonCard} />);
+    render(
+      <Provider store={store}>
+        <Form addPersonCard={addPersonCard} />
+      </Provider>
+    );
     expect(screen.getByRole('button')).toBeDisabled();
     expect(screen.queryByDisplayValue('Norway')).not.toBeInTheDocument();
-    fireEvent.change(screen.getByLabelText(/Country/), { target: { value: 'Norway' } });
+    act(() => {
+      fireEvent.change(screen.getByLabelText(/Country/), { target: { value: 'Norway' } });
+    });
     expect(screen.getByDisplayValue('Norway')).toBeInTheDocument();
     expect(screen.getByRole('button')).not.toBeDisabled();
   });
 
   it('checks file input', () => {
-    render(<Form addPersonCard={addPersonCard} />);
+    render(
+      <Provider store={store}>
+        <Form addPersonCard={addPersonCard} />
+      </Provider>
+    );
     expect(screen.getByRole('button')).toBeDisabled();
-    fireEvent.change(screen.getByLabelText(/Profile picture/));
+    act(() => {
+      fireEvent.change(screen.getByLabelText(/Profile picture/));
+    });
     expect(screen.getByRole('button')).not.toBeDisabled();
   });
 
   it('checks consent checkbox checking', () => {
-    render(<Form addPersonCard={addPersonCard} />);
+    render(
+      <Provider store={store}>
+        <Form addPersonCard={addPersonCard} />
+      </Provider>
+    );
     expect(screen.getByRole('button')).toBeDisabled();
-    userEvent.click(screen.getByRole('checkbox'));
+    act(() => {
+      userEvent.click(screen.getByRole('checkbox'));
+    });
     expect(screen.getByRole('checkbox')).toBeChecked();
     expect(screen.getByRole('button')).not.toBeDisabled();
   });
 
   it('checks and error mesages under form fields', async () => {
-    render(<Form addPersonCard={addPersonCard} />);
+    render(
+      <Provider store={store}>
+        <Form addPersonCard={addPersonCard} />
+      </Provider>
+    );
     expect(screen.getByRole('button')).toBeDisabled();
-    userEvent.click(screen.getByRole('checkbox'));
+    act(() => {
+      userEvent.click(screen.getByRole('checkbox'));
+    });
     expect(screen.getByRole('checkbox')).toBeChecked();
     expect(screen.getByRole('button')).not.toBeDisabled();
-    userEvent.click(screen.getByRole('checkbox'));
+    act(() => {
+      userEvent.click(screen.getByRole('checkbox'));
+    });
     expect(screen.getByRole('checkbox')).not.toBeChecked();
-    userEvent.click(screen.getByRole('button'));
+    act(() => {
+      userEvent.click(screen.getByRole('button'));
+    });
     expect(screen.getByRole('button')).toBeDisabled();
     await waitFor(() => expect(screen.getAllByText(/should not be empty/).length).toBe(2));
     expect(screen.getByText(/you must be at least 12 yo/)).toBeInTheDocument();
@@ -101,55 +163,79 @@ describe('Form', () => {
   });
 
   it('checks reset error mesages under form fields and submit button enabling', async () => {
-    render(<Form addPersonCard={addPersonCard} />);
+    render(
+      <Provider store={store}>
+        <Form addPersonCard={addPersonCard} />
+      </Provider>
+    );
     expect(screen.getByRole('button')).toBeDisabled();
-    userEvent.click(screen.getByLabelText(/consent/));
+    act(() => {
+      userEvent.click(screen.getByLabelText(/consent/));
+    });
     expect(screen.getByLabelText(/consent/)).toBeChecked();
     expect(screen.queryByRole('button')).not.toBeDisabled();
-    userEvent.click(screen.getByLabelText(/consent/));
+    act(() => {
+      userEvent.click(screen.getByLabelText(/consent/));
+    });
     expect(screen.getByLabelText(/consent/)).not.toBeChecked();
-    userEvent.click(screen.getByRole('button'));
+    act(() => {
+      userEvent.click(screen.getByRole('button'));
+    });
     expect(screen.getByRole('button')).toBeDisabled();
     await waitFor(() => expect(screen.getAllByText(/should not be empty/).length).toBe(2));
     expect(screen.getByText(/you must be at least 12 yo/)).toBeInTheDocument();
     expect(screen.getByText(/please select country/)).toBeInTheDocument();
     expect(screen.getByText(/please select picture/)).toBeInTheDocument();
     expect(screen.getByText(/please check to proceed/)).toBeInTheDocument();
-    userEvent.type(screen.getByLabelText(/Name/), 'namevalue');
+    act(() => {
+      userEvent.type(screen.getByLabelText(/Name/), 'namevalue');
+    });
     expect(screen.getByText(/you must be at least 12 yo/)).toBeInTheDocument();
     expect(screen.getByText(/please select country/)).toBeInTheDocument();
     expect(screen.getByText(/please select picture/)).toBeInTheDocument();
     expect(screen.getByText(/please check to proceed/)).toBeInTheDocument();
     expect(screen.getByRole('button')).toBeDisabled();
-    userEvent.type(screen.getByLabelText(/Surname/), 'surnamevalue');
+    act(() => {
+      userEvent.type(screen.getByLabelText(/Surname/), 'surnamevalue');
+    });
     expect(screen.queryByText('should not be empty')).not.toBeInTheDocument();
     expect(screen.getByText(/you must be at least 12 yo/)).toBeInTheDocument();
     expect(screen.getByText(/please select country/)).toBeInTheDocument();
     expect(screen.getByText(/please select picture/)).toBeInTheDocument();
     expect(screen.getByText(/please check to proceed/)).toBeInTheDocument();
     expect(screen.getByRole('button')).toBeDisabled();
-    userEvent.click(screen.getByLabelText('male'));
+    act(() => {
+      userEvent.click(screen.getByLabelText('male'));
+    });
     expect(screen.getByText(/you must be at least 12 yo/)).toBeInTheDocument();
     expect(screen.getByText(/please select country/)).toBeInTheDocument();
     expect(screen.getByText(/please select picture/)).toBeInTheDocument();
     expect(screen.getByText(/please check to proceed/)).toBeInTheDocument();
     expect(screen.getByRole('button')).toBeDisabled();
-    fireEvent.change(screen.getByLabelText(/Country/), { target: { value: 'Norway' } });
+    act(() => {
+      fireEvent.change(screen.getByLabelText(/Country/), { target: { value: 'Norway' } });
+    });
     expect(screen.getByText(/you must be at least 12 yo/)).toBeInTheDocument();
     expect(screen.queryByText(/please select country/)).not.toBeInTheDocument();
     expect(screen.getByText(/please select picture/)).toBeInTheDocument();
     expect(screen.getByText(/please check to proceed/)).toBeInTheDocument();
     expect(screen.getByRole('button')).toBeDisabled();
-    fireEvent.change(screen.getByLabelText(/Birthday/), { target: { value: '2002-02-04' } });
+    act(() => {
+      fireEvent.change(screen.getByLabelText(/Birthday/), { target: { value: '2002-02-04' } });
+    });
     expect(screen.queryByText(/you must be at least 12 yo/)).not.toBeInTheDocument();
     expect(screen.getByText(/please select picture/)).toBeInTheDocument();
     expect(screen.getByText(/please check to proceed/)).toBeInTheDocument();
     expect(screen.getByRole('button')).toBeDisabled();
-    userEvent.click(screen.getByRole('checkbox'));
+    act(() => {
+      userEvent.click(screen.getByRole('checkbox'));
+    });
     expect(screen.getByText(/please select picture/)).toBeInTheDocument();
     expect(screen.queryByText(/please check to proceed/)).not.toBeInTheDocument();
     expect(screen.getByRole('button')).toBeDisabled();
-    fireEvent.change(screen.getByLabelText(/Profile picture/));
+    act(() => {
+      fireEvent.change(screen.getByLabelText(/Profile picture/));
+    });
     expect(screen.queryByText(/please select picture/)).not.toBeInTheDocument();
     expect(screen.getByRole('button')).not.toBeDisabled();
   });

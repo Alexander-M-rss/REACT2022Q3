@@ -2,6 +2,8 @@ import React from 'react';
 import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SearchBar from './searchBar';
+import { Provider } from 'react-redux';
+import store from 'store/store';
 
 function localStorageMock() {
   let storage: { [key: string]: string };
@@ -33,18 +35,30 @@ const handleSearch = jest.fn();
 
 describe('SearchBar', () => {
   it('renders component', () => {
-    render(<SearchBar placeholder="Search test" searchHandler={handleSearch} />);
+    render(
+      <Provider store={store}>
+        <SearchBar placeholder="Search test" searchHandler={handleSearch} />
+      </Provider>
+    );
     expect(screen.getAllByRole('button').length).toBe(2);
     expect(screen.getByRole('textbox')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Search test')).toBeInTheDocument();
   });
   it('changes input value by onCnange event', () => {
-    render(<SearchBar placeholder="Search test" searchHandler={handleSearch} />);
+    render(
+      <Provider store={store}>
+        <SearchBar placeholder="Search test" searchHandler={handleSearch} />
+      </Provider>
+    );
     userEvent.type(screen.getByRole('textbox'), 'test search');
     expect(screen.getByDisplayValue('test search')).toBeInTheDocument();
   });
   it('clears input value by clear button onClick event', () => {
-    render(<SearchBar placeholder="Search test" searchHandler={handleSearch} />);
+    render(
+      <Provider store={store}>
+        <SearchBar placeholder="Search test" searchHandler={handleSearch} />
+      </Provider>
+    );
     userEvent.click(screen.getAllByRole('button')[1]);
     userEvent.type(screen.getByRole('textbox'), 'test search');
     expect(screen.getByDisplayValue('test search')).toBeInTheDocument();
@@ -54,18 +68,30 @@ describe('SearchBar', () => {
   localStorage = localStorageMock();
   it('renders input value from localStorage', () => {
     localStorage.setItem('searchBarValue', 'set value from localStorage');
-    render(<SearchBar placeholder="Search test" searchHandler={handleSearch} />);
+    render(
+      <Provider store={store}>
+        <SearchBar placeholder="Search test" searchHandler={handleSearch} />
+      </Provider>
+    );
     expect(screen.getByRole('textbox')).toHaveValue('set value from localStorage');
   });
   it('saves input value to localStorage', () => {
     localStorage.clear();
-    render(<SearchBar placeholder="Search test" searchHandler={handleSearch} />);
+    render(
+      <Provider store={store}>
+        <SearchBar placeholder="Search test" searchHandler={handleSearch} />
+      </Provider>
+    );
     userEvent.type(screen.getByRole('textbox'), 'set value to localStorage');
     cleanup();
     expect(localStorage.getItem('searchBarValue')).toBe('set value to localStorage');
   });
   it('submits search by submit button click', () => {
-    render(<SearchBar placeholder="Search test" searchHandler={handleSearch} />);
+    render(
+      <Provider store={store}>
+        <SearchBar placeholder="Search test" searchHandler={handleSearch} />
+      </Provider>
+    );
     userEvent.type(screen.getByRole('textbox'), '{selectall}test search');
     userEvent.click(screen.getAllByRole('button')[0]);
     expect(handleSearch).toBeCalledTimes(1);
@@ -77,7 +103,11 @@ describe('SearchBar', () => {
     });
   });
   it('submits search by input Enter in textbox', () => {
-    render(<SearchBar placeholder="Search test" searchHandler={handleSearch} />);
+    render(
+      <Provider store={store}>
+        <SearchBar placeholder="Search test" searchHandler={handleSearch} />
+      </Provider>
+    );
     userEvent.type(screen.getByRole('textbox'), '{selectall}test search{Enter}');
     expect(handleSearch).toBeCalledTimes(1);
     expect(handleSearch).toBeCalledWith({

@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { IGetItemsOptions, SORTING } from 'api/api';
-import GlobalStateContext from 'state/context';
+import { useAppSelector } from 'store/hooks';
 import './sortingSwitcher.css';
 
 interface ISortingSwitcherProps {
@@ -17,14 +17,14 @@ const sortingOptions = [
 ];
 
 const SortingSwitcher = ({ searchHandler }: ISortingSwitcherProps) => {
-  const { globalState } = useContext(GlobalStateContext);
+  const state = useAppSelector((store) => store.state);
 
   const handleChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
     searchHandler({
-      search: globalState.search,
+      search: state.search,
       sorting: event.target.value as SORTING,
-      page: globalState.page,
-      limit: globalState.itemsPerPage,
+      page: state.page,
+      limit: state.itemsPerPage,
     });
   };
 
@@ -33,9 +33,9 @@ const SortingSwitcher = ({ searchHandler }: ISortingSwitcherProps) => {
       <span>Sorting:</span>
       <select
         className="sorting-switcher__select"
-        value={globalState.sorting}
+        value={state.sorting}
         onChange={handleChange}
-        disabled={!!globalState.errMsg.length}
+        disabled={!!state.errMsg.length}
         data-testid="sort"
       >
         {sortingOptions.map((option) => {

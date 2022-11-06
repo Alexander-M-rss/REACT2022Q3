@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import './form.css';
 import { IFormValues, ErrMsg } from './formTypes';
 import LabledInput from './labledInput';
@@ -7,8 +7,8 @@ import LabledSelect from './labledSelect';
 import LabledSwitcher from './labledSwitcher';
 import { IPersonCardProps } from './personCard';
 import { useForm } from 'react-hook-form';
-import GlobalStateContext from 'state/context';
-import { ACTION } from 'state/reducer';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { saveFormValues } from 'store/stateSlice';
 
 interface IFormProps {
   addPersonCard: (personCard: IPersonCardProps) => void;
@@ -39,25 +39,29 @@ function Form({ addPersonCard }: IFormProps) {
     getValues,
     setValue,
   } = useForm<IFormValues>({ reValidateMode: 'onSubmit' });
-  const { globalState, dispatch } = useContext(GlobalStateContext);
+  const dispatch = useAppDispatch();
+  const formValues = useAppSelector((store) => store.state.formValues);
 
   useEffect(() => {
     return () => {
       if (!isFirstFilling || !isSubmitDisabled) {
-        dispatch({ type: ACTION.saveFormValues, payload: getValues() });
+        const { name, surname, birthday, country, gender, consent } = getValues();
+
+        dispatch(saveFormValues({ name, surname, birthday, country, gender, consent }));
       }
     };
   }, [dispatch, getValues, isFirstFilling, isSubmitDisabled]);
 
   useEffect(() => {
-    if (globalState.formValues) {
-      for (const [key, value] of Object.entries(globalState.formValues)) {
+    if (formValues) {
+      for (const [key, value] of Object.entries(formValues)) {
         setValue(key as keyof IFormValues, value);
       }
       setIsFirstFilling(false);
       setIsSubmitDisabled(false);
     }
-  }, [globalState.formValues, setValue]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const submitHandler = (data: IFormValues) => {
     const { name, surname, birthday, country, gender } = data;
