@@ -2,15 +2,16 @@ import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import RoutesComponent from './components/routes';
 import './App.css';
-import { GlobalStatePovider } from 'state/context';
+import { Provider } from 'react-redux';
+import store from './store/store';
 
 function App() {
   return (
     <div className="app">
       <BrowserRouter basename={process.env.PUBLIC_URL}>
-        <GlobalStatePovider>
+        <Provider store={store}>
           <RoutesComponent />
-        </GlobalStatePovider>
+        </Provider>
       </BrowserRouter>
     </div>
   );

@@ -35,7 +35,7 @@ interface IApiResp<T> {
   pages: number;
 }
 
-interface IItemsResp {
+export interface IItemsResp {
   items: IItemData[];
   pages: number;
   errMsg: string;

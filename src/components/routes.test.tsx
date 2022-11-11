@@ -2,12 +2,16 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import RoutesComponent from './routes';
 import { render, screen } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import store from 'store/store';
 
 describe('Router', () => {
   it('renders Main page on route "/"', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
-        <RoutesComponent />
+        <Provider store={store}>
+          <RoutesComponent />
+        </Provider>
       </MemoryRouter>
     );
     expect(screen.getByRole('heading', { name: 'Main Page' })).toBeInTheDocument();
@@ -15,7 +19,9 @@ describe('Router', () => {
   it('renders About Us page on route "/about"', () => {
     render(
       <MemoryRouter initialEntries={['/about']}>
-        <RoutesComponent />
+        <Provider store={store}>
+          <RoutesComponent />
+        </Provider>
       </MemoryRouter>
     );
     expect(screen.getByRole('heading', { name: 'About Us' })).toBeInTheDocument();
@@ -23,7 +29,9 @@ describe('Router', () => {
   it('renders About Us page on route "/forms"', () => {
     render(
       <MemoryRouter initialEntries={['/forms']}>
-        <RoutesComponent />
+        <Provider store={store}>
+          <RoutesComponent />
+        </Provider>
       </MemoryRouter>
     );
     expect(screen.getByRole('heading', { name: 'Forms Page' })).toBeInTheDocument();
@@ -31,7 +39,9 @@ describe('Router', () => {
   it('renders 404 page on route "/404"', () => {
     render(
       <MemoryRouter initialEntries={['/404']}>
-        <RoutesComponent />
+        <Provider store={store}>
+          <RoutesComponent />
+        </Provider>
       </MemoryRouter>
     );
     expect(screen.getByRole('heading', { name: 'Not Found' })).toBeInTheDocument();
@@ -39,7 +49,9 @@ describe('Router', () => {
   it('renders 404 page on route "/wrong-route"', () => {
     render(
       <MemoryRouter initialEntries={['/wrong-route']}>
-        <RoutesComponent />
+        <Provider store={store}>
+          <RoutesComponent />
+        </Provider>
       </MemoryRouter>
     );
     expect(screen.getByRole('heading', { name: 'Not Found' })).toBeInTheDocument();
@@ -48,7 +60,9 @@ describe('Router', () => {
   it('renders Details page on route "/details" which redirects to Main page', () => {
     render(
       <MemoryRouter initialEntries={['/details']}>
-        <RoutesComponent />
+        <Provider store={store}>
+          <RoutesComponent />
+        </Provider>
       </MemoryRouter>
     );
     expect(screen.getByRole('heading', { name: 'Main Page' })).toBeInTheDocument();

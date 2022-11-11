@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { IGetItemsOptions, DEFAULT_PER_PAGE } from 'api/api';
-import GlobalStateContext from 'state/context';
+import { useAppSelector } from 'store/hooks';
 import './paginationSwitcher.css';
 
 const PER_PAGE_DELTA = 5;
@@ -12,7 +12,7 @@ interface IPaginationSwitcherProps {
 }
 
 const PaginationSwitcher = ({ searchHandler }: IPaginationSwitcherProps) => {
-  const { globalState } = useContext(GlobalStateContext);
+  const state = useAppSelector((store) => store.state);
 
   const handleClick: React.MouseEventHandler<HTMLDivElement> = (event) => {
     let nextPage: number;
@@ -25,33 +25,33 @@ const PaginationSwitcher = ({ searchHandler }: IPaginationSwitcherProps) => {
           break;
         }
         case 'prev': {
-          nextPage = globalState.page - 1;
+          nextPage = state.page - 1;
           break;
         }
         case 'next': {
-          nextPage = globalState.page + 1;
+          nextPage = state.page + 1;
           break;
         }
         case 'last': {
-          nextPage = globalState.pages;
+          nextPage = state.pages;
           break;
         }
         default:
           return;
       }
       searchHandler({
-        search: globalState.search,
-        sorting: globalState.sorting,
+        search: state.search,
+        sorting: state.sorting,
         page: nextPage,
-        limit: globalState.itemsPerPage,
+        limit: state.itemsPerPage,
       });
     }
   };
 
   const handleChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
     searchHandler({
-      search: globalState.search,
-      sorting: globalState.sorting,
+      search: state.search,
+      sorting: state.sorting,
       page: 1,
       limit: +event.target.value,
     });
@@ -61,38 +61,28 @@ const PaginationSwitcher = ({ searchHandler }: IPaginationSwitcherProps) => {
     <div className="pagination-switcher" data-testid="pagination">
       <span>Page:</span>
       <div className="page-btns" onClick={handleClick}>
-        <button className="page-btn" name="first" id="first" disabled={globalState.page <= 1}>
+        <button className="page-btn" name="first" id="first" disabled={state.page <= 1}>
           {'<<'}
         </button>
-        <button className="page-btn" name="prev" id="prev" disabled={globalState.page <= 1}>
+        <button className="page-btn" name="prev" id="prev" disabled={state.page <= 1}>
           {'<'}
         </button>
         <span className="page-number">
-          {globalState.page} / {globalState.pages}
+          {state.page} / {state.pages}
         </span>
-        <button
-          className="page-btn"
-          name="next"
-          id="next"
-          disabled={globalState.page >= globalState.pages}
-        >
+        <button className="page-btn" name="next" id="next" disabled={state.page >= state.pages}>
           {'>'}
         </button>
-        <button
-          className="page-btn"
-          name="last"
-          id="last"
-          disabled={globalState.page >= globalState.pages}
-        >
+        <button className="page-btn" name="last" id="last" disabled={state.page >= state.pages}>
           {'>>'}
         </button>
       </div>
       <span> per page:</span>
       <select
         className="pagination-switcher__select"
-        value={globalState.itemsPerPage}
+        value={state.itemsPerPage}
         onChange={handleChange}
-        disabled={!!globalState.errMsg.length}
+        disabled={!!state.errMsg.length}
         data-testid="per-page"
       >
         {perPageOpt.map((_, i) => {

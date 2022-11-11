@@ -4,7 +4,10 @@ import { BrowserRouter } from 'react-router-dom';
 import Main from './main';
 import itemsData from 'data/items';
 import userEvent from '@testing-library/user-event';
-import { GlobalStatePovider } from 'state/context';
+import { Provider } from 'react-redux';
+import store from 'store/store';
+import { resetState } from 'store/stateSlice';
+import { act } from 'react-dom/test-utils';
 
 let fakeFetch: jest.SpyInstance<
   Promise<Response>,
@@ -20,8 +23,9 @@ beforeEach(
   () =>
     (fakeFetch = jest.spyOn(global, 'fetch').mockImplementation(async () => {
       return new Promise(async (resolve) => {
-        const sleep = async (delay: number) => setTimeout(() => {}, delay);
-        await sleep(1000);
+        const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+        await sleep(100);
         resolve({
           ok: true,
           status: 200,
@@ -34,15 +38,16 @@ beforeEach(
 
 afterEach(() => {
   jest.resetAllMocks();
+  store.dispatch(resetState());
 });
 
 describe('Main page', () => {
   it('renders component', async () => {
     render(
       <BrowserRouter>
-        <GlobalStatePovider>
+        <Provider store={store}>
           <Main />
-        </GlobalStatePovider>
+        </Provider>
       </BrowserRouter>
     );
     expect(screen.getByTestId('header')).toBeInTheDocument();
@@ -66,13 +71,15 @@ describe('Main page', () => {
   it('submits search with results by Enter key pressing in SearchBar', async () => {
     render(
       <BrowserRouter>
-        <GlobalStatePovider>
+        <Provider store={store}>
           <Main />
-        </GlobalStatePovider>
+        </Provider>
       </BrowserRouter>
     );
     expect(await screen.findByTestId('items-cards-list')).toBeInTheDocument();
-    userEvent.type(screen.getByRole('textbox'), '{selectall}Search with result{Enter}');
+    act(() => {
+      userEvent.type(screen.getByRole('textbox'), '{selectall}Search with result{Enter}');
+    });
     expect(await screen.findByAltText('Loading...')).toBeInTheDocument();
     expect(await screen.findByTestId('items-cards-list')).toBeInTheDocument();
     expect(screen.queryByAltText('Loading...')).not.toBeInTheDocument();
@@ -87,17 +94,17 @@ describe('Main page', () => {
   it('submits search without results by Search button click', async () => {
     render(
       <BrowserRouter>
-        <GlobalStatePovider>
+        <Provider store={store}>
           <Main />
-        </GlobalStatePovider>
+        </Provider>
       </BrowserRouter>
     );
     expect(await screen.findByTestId('items-cards-list')).toBeInTheDocument();
 
     fakeFetch = jest.spyOn(global, 'fetch').mockImplementation(async () => {
       return new Promise(async (resolve) => {
-        const sleep = async (delay: number) => setTimeout(() => {}, delay);
-        await sleep(1000);
+        const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+        await sleep(100);
         resolve({
           ok: true,
           status: 200,
@@ -106,25 +113,26 @@ describe('Main page', () => {
         } as Response);
       });
     });
-
-    userEvent.type(screen.getByRole('textbox'), '{selectall}Search without result');
-    userEvent.click(screen.getAllByRole('button')[0]);
+    act(() => {
+      userEvent.type(screen.getByRole('textbox'), '{selectall}Search without result');
+      userEvent.click(screen.getAllByRole('button')[0]);
+    });
     expect(await screen.findByAltText('Loading...')).toBeInTheDocument();
     expect(await screen.findByTestId('items-cards-list')).toBeInTheDocument();
     expect(screen.queryByAltText('Loading...')).not.toBeInTheDocument();
     expect(screen.queryAllByTestId('item-card').length).toBe(0);
     expect(screen.queryByText('Nothing has been found')).toBeInTheDocument();
-    expect(fakeFetch.mock.calls[1]).toEqual([
+    expect(fakeFetch).lastCalledWith(
       'https://the-one-api.dev/v2/character/?page=1&limit=10&sort=name:asc&name=/Search without result/i',
-      options,
-    ]);
+      options
+    );
   });
 
   it('recieves invalid data', async () => {
     fakeFetch = jest.spyOn(global, 'fetch').mockImplementation(async () => {
       return new Promise(async (resolve) => {
-        const sleep = async (delay: number) => setTimeout(() => {}, delay);
-        await sleep(1000);
+        const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+        await sleep(100);
         resolve({
           ok: true,
           status: 200,
@@ -136,9 +144,9 @@ describe('Main page', () => {
 
     render(
       <BrowserRouter>
-        <GlobalStatePovider>
+        <Provider store={store}>
           <Main />
-        </GlobalStatePovider>
+        </Provider>
       </BrowserRouter>
     );
     expect(await screen.findByTestId('items-cards-list')).toBeInTheDocument();
@@ -149,47 +157,57 @@ describe('Main page', () => {
   it('tests next, last, previous and first pages switching', async () => {
     render(
       <BrowserRouter>
-        <GlobalStatePovider>
+        <Provider store={store}>
           <Main />
-        </GlobalStatePovider>
+        </Provider>
       </BrowserRouter>
     );
     expect(await screen.findByTestId('items-cards-list')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', { name: '>' }));
-    expect(fakeFetch.mock.calls[1]).toEqual([
+    act(() => {
+      userEvent.click(screen.getByRole('button', { name: '>' }));
+    });
+    expect(fakeFetch).lastCalledWith(
       'https://the-one-api.dev/v2/character/?page=2&limit=10&sort=name:asc&name=//i',
-      options,
-    ]);
+      options
+    );
     expect(await screen.findByTestId('items-cards-list')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', { name: '>>' }));
-    expect(fakeFetch.mock.calls[2]).toEqual([
+    act(() => {
+      userEvent.click(screen.getByRole('button', { name: '>>' }));
+    });
+    expect(fakeFetch).lastCalledWith(
       'https://the-one-api.dev/v2/character/?page=10&limit=10&sort=name:asc&name=//i',
-      options,
-    ]);
+      options
+    );
     expect(await screen.findByTestId('items-cards-list')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', { name: '<' }));
-    expect(fakeFetch.mock.calls[3]).toEqual([
+    act(() => {
+      userEvent.click(screen.getByRole('button', { name: '<' }));
+    });
+    expect(fakeFetch).lastCalledWith(
       'https://the-one-api.dev/v2/character/?page=9&limit=10&sort=name:asc&name=//i',
-      options,
-    ]);
+      options
+    );
     expect(await screen.findByTestId('items-cards-list')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('button', { name: '<<' }));
-    expect(fakeFetch.mock.calls[4]).toEqual([
+    act(() => {
+      userEvent.click(screen.getByRole('button', { name: '<<' }));
+    });
+    expect(fakeFetch).lastCalledWith(
       'https://the-one-api.dev/v2/character/?page=1&limit=10&sort=name:asc&name=//i',
-      options,
-    ]);
+      options
+    );
   });
 
   it('tests number of items per page switching', async () => {
     render(
       <BrowserRouter>
-        <GlobalStatePovider>
+        <Provider store={store}>
           <Main />
-        </GlobalStatePovider>
+        </Provider>
       </BrowserRouter>
     );
     expect(await screen.findByTestId('items-cards-list')).toBeInTheDocument();
-    userEvent.selectOptions(screen.getByTestId('per-page'), '20');
+    act(() => {
+      userEvent.selectOptions(screen.getByTestId('per-page'), '20');
+    });
     expect(fakeFetch.mock.calls[1]).toEqual([
       'https://the-one-api.dev/v2/character/?page=1&limit=20&sort=name:asc&name=//i',
       options,
@@ -199,16 +217,18 @@ describe('Main page', () => {
   it('tests sorting mode switching', async () => {
     render(
       <BrowserRouter>
-        <GlobalStatePovider>
+        <Provider store={store}>
           <Main />
-        </GlobalStatePovider>
+        </Provider>
       </BrowserRouter>
     );
     expect(await screen.findByTestId('items-cards-list')).toBeInTheDocument();
-    userEvent.selectOptions(
-      screen.getByTestId('sort'),
-      screen.getByRole('option', { name: 'Name Descending' })
-    );
+    act(() => {
+      userEvent.selectOptions(
+        screen.getByTestId('sort'),
+        screen.getByRole('option', { name: 'Name Descending' })
+      );
+    });
     expect(fakeFetch.mock.calls[1]).toEqual([
       'https://the-one-api.dev/v2/character/?page=1&limit=10&sort=name:desc&name=//i',
       options,

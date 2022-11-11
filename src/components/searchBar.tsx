@@ -1,6 +1,6 @@
 import { IGetItemsOptions } from 'api/api';
-import React, { useContext, useEffect, useState } from 'react';
-import GlobalStateContext from 'state/context';
+import React, { useEffect, useState } from 'react';
+import { useAppSelector } from 'store/hooks';
 import './searchBar.css';
 
 const SEARCH_BAR_HEIGHT = '36px';
@@ -13,7 +13,7 @@ interface ISearchBarProps {
 
 function SearchBar({ placeholder, searchHandler }: ISearchBarProps) {
   const [value, setValue] = useState('');
-  const { globalState } = useContext(GlobalStateContext);
+  const { sorting, itemsPerPage } = useAppSelector((store) => store.state);
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
     setValue(event.target.value);
@@ -28,9 +28,9 @@ function SearchBar({ placeholder, searchHandler }: ISearchBarProps) {
     event.preventDefault();
     searchHandler({
       search: value,
-      sorting: globalState.sorting,
+      sorting: sorting,
       page: 1,
-      limit: globalState.itemsPerPage,
+      limit: itemsPerPage,
     });
   };
 

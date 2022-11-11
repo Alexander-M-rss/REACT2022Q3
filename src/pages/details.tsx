@@ -1,20 +1,18 @@
-import React, { useContext, useEffect } from 'react';
-import GlobalStateContext from 'state/context';
+import React, { useEffect } from 'react';
 import Header, { HEADER_HEIGHT } from '../components/header';
 import ItemCard from 'components/itemCard';
-import { ACTION } from 'state/reducer';
 import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { resetDetailsIdx } from 'store/stateSlice';
 import './details.css';
 
 function Details() {
-  const {
-    globalState: { itemsData, detailsIdx },
-    dispatch,
-  } = useContext(GlobalStateContext);
+  const { itemsData, detailsIdx } = useAppSelector((store) => store.state);
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const handleClick = () => {
-    dispatch({ type: ACTION.resetDetailsIdx });
+    dispatch(resetDetailsIdx());
     navigate('/');
   };
 
